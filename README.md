@@ -17,7 +17,7 @@ and build them:
 
 Use the --help option to see the different command-line options:
 
-    python3 ./bczar.py --help
+    python3 bczar.py --help
 
 To see the help for a given command:
 
