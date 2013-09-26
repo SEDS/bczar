@@ -2,8 +2,7 @@ Build Czar (bczar)
 ==================
 
 This is a custom framework for building different middleware frameworks and
-its dependencies. This include downloading source files from their respective
-locations.
+its dependencies. 
 
 Quick Start
 -----------
