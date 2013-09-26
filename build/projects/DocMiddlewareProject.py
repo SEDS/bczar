@@ -214,3 +214,25 @@ class DocMiddlewareProject (Project):
 
         mwc.generate ()
         mwc.build ()
+
+    #
+    # Build the project
+    #
+    def clean (self, prefix, type, versioned_namespace):
+        import sys
+        from string import Template
+
+        # First, we are going to build ACE + TAO + CIAO + DAnCE
+        CIAO_ROOT = path.abspath (path.join (prefix, self.__location__, 'CIAO'))
+        os.environ['CIAO_ROOT'] = CIAO_ROOT
+
+        workspace = path.join (CIAO_ROOT, 'CIAO_TAO_DAnCE.mwc')
+
+        features = "xerces3=1,boost=1"
+
+        if versioned_namespace:
+            features += ',versioned_namespace=1'
+
+        from ..MpcWorkspace import MpcWorkspace
+        mwc =  MpcWorkspace (workspace, type, features, True)
+        mwc.clean ()

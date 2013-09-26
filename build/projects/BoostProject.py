@@ -148,4 +148,3 @@ class BoostProject (Project):
           cmd = [bjam, prefix_arg, '--without-python', 'install', '-sNO_COMPRESSION=1']
 
         subprocess.check_call (cmd, cwd = BOOST_ROOT)
-    

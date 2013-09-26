@@ -85,6 +85,12 @@ class Project:
         pass
 
     #
+    # Clean the project.
+    #
+    def clean (self, prefix, type, versioned_namespace):
+        pass
+        
+    #
     # Set the project's environment variables.
     #
     def set_env_variables (self, prefix):

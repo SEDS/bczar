@@ -185,3 +185,48 @@ class XercescProject (Project):
 
             cmd = ['make', 'install']
             subprocess.check_call (cmd, cwd = XERCESCROOT)
+
+    #
+    # Build the project
+    #
+    def clean (self, prefix, type, versioned_namespace):
+        import subprocess
+        
+        XERCESCROOT = os.environ['XERCESCROOT']
+
+        # First, we need to boostrap the Xerces-C environment.
+        platform = sys.platform
+
+        if platform == 'win32':
+            import shutil
+
+            sln = 'projects/Win32/%s/xerces-all/xerces-all.sln' % type.upper ()
+            configs = ['Debug|Win32',
+                       'Release|Win32',
+                       'Static Debug|Win32',
+                       'Static Release|Win32']
+
+            # Make sure the library path exists.
+            libpath = os.path.join (XERCESCROOT, 'lib')
+            if not os.path.exists (libpath):
+                os.mkdir (libpath)
+
+            for config in configs:
+                from ..Utilities import get_vc_executable
+                cmd = [get_vc_executable (), sln, '/useenv', '/Project', 'XercesLib']
+                cmd.extend (['/Clean', config])
+
+                subprocess.check_call (cmd, cwd = XERCESCROOT)
+
+            # Now that we are done cleaning the project, we need to
+            # populate the include directory.
+            import shutil
+
+            include = os.path.join (XERCESCROOT, 'include')
+            if os.path.exists (include):
+                shutil.rmtree (include)
+
+        else:
+            # Let's configure Xerces-C using the new configuration script.
+            cmd = ['make', 'clean']
+            subprocess.check_call (cmd, cwd = XERCESCROOT)

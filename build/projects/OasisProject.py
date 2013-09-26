@@ -138,3 +138,35 @@ class OasisProject (Project):
         mwc.generate ()
         mwc.build ()
 
+    #
+    # Build the XSC project.
+    #
+    def clean (self, prefix, type, versioned_namespace):
+        OASIS_ROOT = os.environ['OASIS_ROOT']
+        workspace = path.join (OASIS_ROOT, 'OASIS.mwc')
+
+        # Generate the workspace
+        features = 'xerces3=1,boost=1,tao=1,sqlite3=1,tests=0,performance_tests=0,build=0,examples=0,snmp=0,noinline=0'
+
+        if 'TENA_HOME' in os.environ:
+            features += ',tena=1'
+        else:
+            features += ',tena=0'
+
+        if 'SSL_ROOT' in os.environ:
+            features += ',openssl=1'
+        else:
+            features += ',openssl=0'
+
+        if 'PIN_ROOT' in os.environ:
+            features += ',pintool=1'
+        else:
+            features += ',pintool=0'
+
+        if versioned_namespace:
+            features += ',versioned_namespace=1'
+
+        from ..MpcWorkspace import MpcWorkspace
+        mwc = MpcWorkspace (workspace, type, features, True)
+        mwc.clean ()
+

@@ -29,6 +29,7 @@ def __create__ ():
 #
 class BuildCommand (Command):
   __versioned_namespace__ = False
+  __clean__ = False
   
   #
   # Get the command's name
@@ -47,12 +48,14 @@ class BuildCommand (Command):
   #
   def init (self, args):
     # Parse the command-line arguments.
-    long_options = ['versioned-namespace']
+    long_options = ['versioned-namespace', 'clean']
     opts, args = getopt.getopt (args, '', long_options)
     
     for o, a in opts:
         if o == "--versioned-namespace":
-            self.__versioned_namespace__ = True
+          self.__versioned_namespace__ = True
+        elif o == '--clean':
+          self.__clean__ = True
   
   #
   # Execute the command
@@ -71,18 +74,24 @@ class BuildCommand (Command):
         if not proj.validate_environment ():
             sys.exit (1)
     
-    if self.__versioned_namespace__:
+    if (self.__versioned_namespace__):
         print ('*** info: building projects with versioned namespace support')
         
-    for proj in workspace.order_projects ():
-        print ('*** info: building %s...' % proj.name ())
-        proj.build (prefix, build_type, self.__versioned_namespace__)
-        
+    if (self.__clean__):
+      for proj in workspace.order_projects ():
+          print ('*** info: cleaning %s...' % proj.name ())
+          proj.clean (prefix, build_type, self.__versioned_namespace__)
+    else:
+      for proj in workspace.order_projects ():
+          print ('*** info: building %s...' % proj.name ())
+          proj.build (prefix, build_type, self.__versioned_namespace__)
+      
   #
   # Print command help information
   #
   def print_help (self):
     usage = """  --versioned-namespace             Build with versioned namespace support
+  --clean                           Clean the projects               
 """
 
     print (usage)

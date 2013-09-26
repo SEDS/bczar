@@ -4,3 +4,5 @@
 # Python Files
 *.pyc
 
+# MacOS X Files
+.DS_Store

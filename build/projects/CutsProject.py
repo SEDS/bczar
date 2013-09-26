@@ -153,8 +153,29 @@ class CutsProject (Project):
     #
     # Build the project
     #
-    def build (self, prefix, type, versioned_namespace):
-        CUTS_ROOT = os.environ['CUTS_ROOT']
+    def build (self, prefix, build_type, versioned_namespace):
+        CUTS_ROOT = self.get_CUTS_ROOT ()        
+        feature_file = path.join (CUTS_ROOT, 'default.features')
+        
+        mwc = self.get_mwc_workspace (prefix, build_type, versioned_namespace)
+        mwc.generate_default_feature_file (feature_file)
+
+        mwc.generate ()
+        mwc.build ()
+
+    #
+    # Clean the project
+    #
+    def clean (self, prefix, build_type, versioned_namespace):
+        # We are assuming the workspace is already generated
+        mwc = self.get_mwc_workspace (prefix, build_type, versioned_namespace)
+        mwc.clean ()
+        
+    #
+    # Get the MWC workspace file
+    #
+    def get_mwc_workspace (self, prefix, build_type, versioned_namespace):
+        CUTS_ROOT = self.get_CUTS_ROOT ()
         workspace = path.join (CUTS_ROOT, 'CUTS.mwc')
 
         if sys.platform == 'win32':
@@ -196,11 +217,7 @@ class CutsProject (Project):
 
         # Generate the workspace
         from ..MpcWorkspace import MpcWorkspace
-        mwc = MpcWorkspace (workspace, type, features, True)
+        return MpcWorkspace (workspace, build_type, features, True)
 
-        feature_file = path.join (CUTS_ROOT, 'default.features')
-        mwc.generate_default_feature_file (feature_file)
-
-        mwc.generate ()
-        mwc.build ()
-
+    def get_CUTS_ROOT (self):
+        return os.environ['CUTS_ROOT']
