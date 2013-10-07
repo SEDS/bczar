@@ -12,6 +12,7 @@
 
 from ..Project import Project
 from ..scm import Subversion
+from ..scm import Git
 
 import os
 from os import path
@@ -49,21 +50,17 @@ class OasisProject (Project):
     # archive, or a source code repository.
     #
     def download (self, prefix, use_trunk):
-        if use_trunk:
-            url = 'https://svn.cs.iupui.edu/repos/OASIS/trunk'
-        else:
-            url = Subversion.latest_version ('https://svn.cs.iupui.edu/repos/OASIS/tags',
-                                             'OASIS-', 
-                                             '\d+\.\d+',
-                                             'anonymous',
-                                             'anonymous')
-            
+        url = 'ssh://git@github.iu.edu/SEDS/OASIS.git'
         abspath = path.abspath (path.join (prefix, self.__location__))
-        Subversion.checkout (url, abspath, 'anonymous', 'anonymous')
 
-    #
-    # Set the project's environment variables.
-    #
+        try:
+          Git.checkout (url, abspath)
+        except getopt.error as ex:
+          print ('*** error: Failed to download repo via IU Github, downloading from public Github')
+          url = 'ssh://git@github.com/hilljh82/OASIS.git'
+          Git.checkout (url, abspath)
+
+    # Set environment variables
     def set_env_variables (self, prefix):
         abspath = path.abspath (path.join (prefix, self.__location__))
         os.environ['OASIS_ROOT'] = abspath
