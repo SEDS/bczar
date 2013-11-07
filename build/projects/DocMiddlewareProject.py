@@ -157,6 +157,12 @@ class DocMiddlewareProject (Project):
             elif version.startswith ('10.7'):
               platform_macros = 'platform_macosx_lion.GNU'
               config_file = 'config-macosx-lion.h'
+            elif version.startswith ('10.8'):
+              platform_macros = 'platform_macosx_mountainlion.GNU'
+              config_file = 'config-macosx-mountainlion.h'
+            elif version.startswith ('10.9'):
+              platform_macros = 'platform_macosx_mavericks.GNU'
+              config_file = 'config-macosx-mavericks.h'
             else:
               assert False, '*** error: unknown/unsupported version of MacOS X'
 
