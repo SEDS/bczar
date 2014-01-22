@@ -30,6 +30,6 @@ need the following applications installed:
 
 * Subversion
 * Git
-* Perl
+* Perl (ActivePERL on Windows)
 
 Each of the applications needs to be able to work from the command-line.
