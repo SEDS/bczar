@@ -21,3 +21,15 @@ Use the --help option to see the different command-line options:
 To see the help for a given command:
 
     %> python3 bczar.py --help [command]
+
+Additional Requirements
+------------------------
+
+Depending on what middleware you are building with the scripts, you may
+need the following applications installed:
+
+* Subversion
+* Git
+* Perl
+
+Each of the applications needs to be able to work from the command-line.
