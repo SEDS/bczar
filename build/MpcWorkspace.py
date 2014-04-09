@@ -94,9 +94,9 @@ class MpcWorkspace:
                 print ("*** error: unsupported build type")
                 sys.exit (1)
 
-            # Execute the build command
-            dir = path.dirname (self._workspace_)
-            subprocess.check_call (cmd, cwd = dir)
+        # Execute the build command
+        dir = path.dirname (self._workspace_)
+        subprocess.check_call (cmd, cwd = dir)
 
     #
     # Clean the generated workspace

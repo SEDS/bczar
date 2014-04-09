@@ -215,6 +215,11 @@ class CutsProject (Project):
         else:
             features += ',tron=0'
 
+        if 'COREDX_TOP' in os.environ:
+            features += ',coredx=1'
+        else:
+            features += ',coredx=0'
+
         # Generate the workspace
         from ..MpcWorkspace import MpcWorkspace
         return MpcWorkspace (workspace, build_type, features, True)
