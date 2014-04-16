@@ -24,7 +24,7 @@ from os import path
 #
 def __create__ ():
     return BoostProject ()
-    
+
 #
 # @class BoostProject
 #
@@ -32,7 +32,7 @@ def __create__ ():
 #
 class BoostProject (Project):
     __location__ = 'boost'
-    
+
     #
     # Default constructor
     #
@@ -44,7 +44,7 @@ class BoostProject (Project):
     # trunk in the SVN repo.
     #
     def download (self, prefix, use_trunk):
-        url = 'https://svn.boost.org/svn/boost/tags/release/Boost_1_48_0'
+        url = 'https://svn.boost.org/svn/boost/tags/release/Boost_1_55_0'
         abspath = path.abspath (path.join (prefix, self.__location__))
         Subversion.checkout (url, abspath)
 
@@ -58,7 +58,7 @@ class BoostProject (Project):
         os.environ['BOOST_ROOT'] = abspath
 
         if sys.platform == 'win32':
-            os.environ['BOOST_VERSION'] = 'boost-1_48'
+            os.environ['BOOST_VERSION'] = 'boost-1_55'
 
         append_libpath_variable (path.join (abspath, 'lib'))
 
@@ -88,22 +88,22 @@ class BoostProject (Project):
         if path.exists (abspath):
             script_path = script.get_this_variable ()
             location = os.path.join (script_path, self.__location__)
-            
+
             script.begin_section ('Boost')
             script.write_env_variable ('BOOST_ROOT', location)
-    
+
             # Locate the Boost version in the version source file. We are
             # going to use it to set the BOOST_VERSION environment variable.
             version_filename = path.join (abspath, 'boost', 'version.hpp')
             version_file = open (version_filename, 'r')
-            
+
             for line in version_file:
                 if '#define' in line and 'BOOST_LIB_VERSION' in line:
                     BOOST_VERSION = line.replace ('"', '').split ()[2]
                     break
-                
+
             version_file.close ()
-                    
+
             script.write_env_variable ('BOOST_VERSION', BOOST_VERSION)
             script.append_libpath_variable (path.join (location, 'lib'))
 
@@ -112,7 +112,7 @@ class BoostProject (Project):
     #
     def build (self, prefix, type, versioned_namespace):
         import subprocess
-        
+
         BOOST_ROOT = os.environ['BOOST_ROOT']
         project_config = path.join (BOOST_ROOT, 'project-config.jam')
         prefix_arg = '--prefix=' + BOOST_ROOT
@@ -133,8 +133,9 @@ class BoostProject (Project):
             toolsets = { 'vc71'     : 'msvc-7.1',
                          'vc8'      : 'msvc-8.0',
                          'vc9'      : 'msvc-9.0',
-                         'vc10'     : 'msvc-10.0'}
-            
+                         'vc10'     : 'msvc-10.0',
+                         'vc11'     : 'msvc-11.0'}
+
             cmd = [bjam,
                    prefix_arg,
                    '--build-type=complete',
@@ -143,7 +144,7 @@ class BoostProject (Project):
                    '--toolset=' + toolsets[type],
                    '--abbreviate-paths',
                    'install']
-          
+
         else:
           cmd = [bjam, prefix_arg, '--without-python', 'install', '-sNO_COMPRESSION=1']
 
