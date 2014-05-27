@@ -50,7 +50,7 @@ class OasisProject (Project):
     # archive, or a source code repository.
     #
     def download (self, prefix, use_trunk):
-        url = 'ssh://git@github.iu.edu/SEDS/OASIS.git'
+        url = 'git@github.iu.edu/SEDS/OASIS.git'
         abspath = path.abspath (path.join (prefix, self.__location__))
 
         try:
