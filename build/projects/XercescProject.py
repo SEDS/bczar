@@ -49,7 +49,6 @@ class XercescProject (Project):
         abspath = path.abspath (path.join (prefix, self.__location__))
 
         if not path.exists (abspath):
-            #use -trunk for VC11 or later
             if use_trunk:
                 url = 'https://svn.apache.org/viewvc/xerces/c/trunk/'
                 Subversion.checkout (url, abspath, 'anonymous', 'anonymous')
