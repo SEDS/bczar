@@ -14,7 +14,7 @@ import os
 import sys
 
 from os import path
-
+from ..scm import Subversion
 from ..Project import Project
 
 #
@@ -49,26 +49,29 @@ class XercescProject (Project):
         abspath = path.abspath (path.join (prefix, self.__location__))
 
         if not path.exists (abspath):
-            # Download the SQLite source files, which are provided in a tarball
-            # that can be download from the web. We are then going to unpackage
-            # the tarball so we can build it later.
-            if sys.platform == 'win32':
-                archive = self._basename_ + '.zip'
+            if use_trunk:
+                url = 'https://svn.apache.org/viewvc/xerces/c/trunk/'
+                Subversion.checkout (url, abspath, 'anonymous', 'anonymous')
             else:
-                archive = self._basename_ + '.tar.gz'
+                # Download the SQLite source files, which are provided in a tarball
+                # that can be download from the web. We are then going to unpackage
+                # the tarball so we can build it later.
+                if sys.platform == 'win32':
+                    archive = self._basename_ + '.zip'
+                else:
+                    archive = self._basename_ + '.tar.gz'
+              
+                url = 'http://www.apache.org/dist/xerces/c/3/sources/' + archive
+                localfile = os.path.join (prefix, archive)
 
-            
-            url = 'http://www.apache.org/dist/xerces/c/3/sources/' + archive
-            localfile = os.path.join (prefix, archive)
+                from ..Utilities import download_url
+                download_url (url, localfile)
 
-            from ..Utilities import download_url
-            download_url (url, localfile)
-
-            # Unpackage the archive, and remove it from disk.
-            from ..Utilities import unpackage_archive
-            unpackage_archive (localfile, os.path.abspath (prefix))
-            
-            os.remove (localfile)
+                # Unpackage the archive, and remove it from disk.
+                from ..Utilities import unpackage_archive
+                unpackage_archive (localfile, os.path.abspath (prefix))
+                
+                os.remove (localfile)
         else:
             print ('*** info: ' + abspath + ' already exists; skipping...')
 
