@@ -50,8 +50,10 @@ class XercescProject (Project):
         if not path.exists (abspath):
             from ..Utilities import autodetect_build_type
             build_type = autodetect_build_type ()
+            
             if build_type == 'vc11':
                 use_trunk = True
+
             if use_trunk:
                 url = 'https://svn.apache.org/viewvc/xerces/c/trunk/'
                 Subversion.checkout (url, abspath, 'anonymous', 'anonymous')
