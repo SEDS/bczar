@@ -121,3 +121,58 @@ def get_vc_executable ():
           print ('*** warning: please be patient...')
 
         return file
+
+#
+# Auto-detect the build type for the script. This function checks the
+# OS platform, and set environment variables to determine the correct
+# build type. If the build type cannot be auto-detected, then None
+# is returned.
+#
+def autodetect_build_type ():
+  sys.stdout.write ('*** info: auto-detecting build type... ')
+  platform = sys.platform
+
+  if platform in ['darwin', 'linux2', 'linux']:
+    type = 'gnuace'
+  else:
+    import re
+    import subprocess
+    
+    # Execute the cl.exe command. This will print the version informatino
+    # to the screen, along with a LOT of other garbage!
+    p = subprocess.Popen (['cl'],
+                          stdout=subprocess.PIPE,
+                          stderr=subprocess.PIPE)
+
+    output = p.communicate ()[1]
+    
+    # The first line of the output contains the version number, but we
+    # must locate it in the line!
+    pattern = '(?P<version_major>\d+)\.(?P<version_minor>\d+)\.\d+(\.\d+)?'
+    match = re.search (pattern, repr (output))
+
+    if match is None:
+      assert False, '*** error: failed to locate cl.exe version'
+
+    # Right now, the 8th word on the line is the version number.
+    version_major = match.group ('version_major')
+    version_minor = match.group ('version_minor')
+
+
+    if version_major == '17':
+      type = 'vc11'
+    elif version_major == '16':
+      type = 'vc10'
+    elif version_major == '15':
+      type = 'vc9'
+    elif version_major == '14':
+      type = 'vc8'
+    elif version_major == '13' and version_minor == '10':
+      type = 'vc71'
+    elif version_major == '13':
+      type = 'vc7'
+    else:
+      assert False, '*** error: unknown cl.exe version (%d.%d)' % (version_major, version_minor)
+
+  sys.stdout.write ('%s\n' % type)
+  return type
