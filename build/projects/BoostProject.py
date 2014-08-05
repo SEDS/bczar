@@ -44,7 +44,10 @@ class BoostProject (Project):
     # trunk in the SVN repo.
     #
     def download (self, prefix, use_trunk):
-        url = 'https://svn.boost.org/svn/boost/tags/release/Boost_1_55_0'
+        # XSC requires boost filesystem version 2.  1.49 is the last release
+        # to include filesystem version 2.  It is also the first release to support
+        # vc11.
+        url = 'https://svn.boost.org/svn/boost/tags/release/Boost_1_49_0'
         abspath = path.abspath (path.join (prefix, self.__location__))
         Subversion.checkout (url, abspath)
 
@@ -58,7 +61,7 @@ class BoostProject (Project):
         os.environ['BOOST_ROOT'] = abspath
 
         if sys.platform == 'win32':
-            os.environ['BOOST_VERSION'] = 'boost-1_55'
+            os.environ['BOOST_VERSION'] = 'boost-1_49'
 
         append_libpath_variable (path.join (abspath, 'lib'))
 
@@ -141,6 +144,8 @@ class BoostProject (Project):
                    '--build-type=complete',
                    '--layout=versioned',
                    '--without-python',
+                   '--without-math',
+                   '--without-signals',
                    '--toolset=' + toolsets[type],
                    '--abbreviate-paths',
                    'install']
