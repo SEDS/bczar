@@ -120,11 +120,6 @@ class OasisProject (Project):
         else:
             features += ',openssl=0'
 
-        if 'PIN_ROOT' in os.environ:
-            features += ',pintool=1'
-        else:
-            features += ',pintool=0'
-
         if versioned_namespace:
             features += ',versioned_namespace=1'
 
