@@ -57,6 +57,13 @@ class XercescProject (Project):
             if use_trunk:
                 url = 'https://svn.apache.org/repos/asf/xerces/c/trunk'
                 Subversion.checkout (url, abspath, 'anonymous', 'anonymous')
+
+                # Trunk checkouts do not have the configure script required for
+                # linux builds.  It must be generated using the helper script reconf
+                if sys.platform != 'win32':
+                  import subprocess
+                  cmd = ['./reconf']
+                  subprocess.check_call (cmd, cwd = abspath)
             else:
                 # Download the SQLite source files, which are provided in a tarball
                 # that can be download from the web. We are then going to unpackage
