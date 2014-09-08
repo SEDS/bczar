@@ -20,11 +20,12 @@ import subprocess
 # @param[in]        location    Sandbox of the checkout
 # @param[in]        username    Username for checkout, if applicable
 # @param[in]        password    Password for checkout, if applicable
+# @param[in]        branch      Branch or tag to checkout
 #
-def checkout (url, location, username=None, password=None):
+def checkout (url, location, username=None, password=None, branch=None):
   from os import path
   from urllib.parse import urlparse, urlunparse
-  
+
   if path.exists (os.path.join (location, '.git')):
     print ('*** info: %s is not an empty directory; skipping download' % location)
     return
@@ -45,7 +46,10 @@ def checkout (url, location, username=None, password=None):
     parsed_url[1] = "%s@%s" (prepend_string, parsed_url[1])
     url = urlunparse (parsed_url)
 
-  cmd = ["git", "clone", "--quiet", url, location]
+  cmd = ["git", "clone", "--quiet"]
+  if branch:
+    cmd.extend (['--branch', branch])
+  cmd.extend ([url, location])
   subprocess.check_call (cmd)
 
   # Checkout submodules if there are any
