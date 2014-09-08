@@ -14,7 +14,7 @@ import os
 import sys
 
 from ..Project import Project
-from ..scm import Subversion
+from ..scm import Git
 from os import path
 
 #
@@ -44,12 +44,10 @@ class BoostProject (Project):
     # trunk in the SVN repo.
     #
     def download (self, prefix, use_trunk):
-        # XSC requires boost filesystem version 2.  1.49 is the last release
-        # to include filesystem version 2.  It is also the first release to support
-        # vc11.
-        url = 'https://svn.boost.org/svn/boost/tags/release/Boost_1_49_0'
+        url = 'https://github.com/boostorg/boost.git'
+        tag = 'boost-1.56.0'
         abspath = path.abspath (path.join (prefix, self.__location__))
-        Subversion.checkout (url, abspath)
+        Git.checkout (url, abspath, branch=tag)
 
     #
     # Set the project's environment variables.
@@ -61,7 +59,7 @@ class BoostProject (Project):
         os.environ['BOOST_ROOT'] = abspath
 
         if sys.platform == 'win32':
-            os.environ['BOOST_VERSION'] = 'boost-1_49'
+            os.environ['BOOST_VERSION'] = 'boost-1_56'
 
         append_libpath_variable (path.join (abspath, 'lib'))
 
@@ -97,7 +95,7 @@ class BoostProject (Project):
 
             # Locate the Boost version in the version source file. We are
             # going to use it to set the BOOST_VERSION environment variable.
-            version_filename = path.join (abspath, 'boost', 'version.hpp')
+            version_filename = path.join (abspath, 'libs', 'config', 'include', 'boost', 'version.hpp')
             version_file = open (version_filename, 'r')
 
             for line in version_file:
