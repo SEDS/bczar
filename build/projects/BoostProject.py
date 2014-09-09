@@ -118,6 +118,9 @@ class BoostProject (Project):
         project_config = path.join (BOOST_ROOT, 'project-config.jam')
         prefix_arg = '--prefix=' + BOOST_ROOT
 
+        if sys.platform != 'win32':
+            self.fix_iostreams (BOOST_ROOT)
+
         if not path.exists (project_config):
             # First, we need to boostrap the Boost environment.
             if sys.platform == 'win32':
@@ -152,3 +155,20 @@ class BoostProject (Project):
           cmd = [bjam, prefix_arg, '--without-python', 'install', '-sNO_COMPRESSION=1']
 
         subprocess.check_call (cmd, cwd = BOOST_ROOT)
+
+    #
+    # Fix iostreams jamfile for linux builds
+    #
+    def fix_iostreams (self, boost_root):
+        jamfile = os.path.join (boost_root, 'libs', 'iostreams', 'build', 'Jamfile.v2')
+        bad_lines = ['      [ ac.check-library /zlib//zlib : <library>/zlib//zlib\n',
+                     '        <source>zlib.cpp <source>gzip.cpp\n']
+
+        with open (jamfile, 'r') as source:
+            lines = source.readlines ()
+
+        with open (jamfile, 'w') as source:
+            for line in lines:
+                if line in bad_lines:
+                    continue
+                source.write (line)
