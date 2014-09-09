@@ -44,7 +44,7 @@ class BoostProject (Project):
     # trunk in the SVN repo.
     #
     def download (self, prefix, use_trunk):
-        url = 'https://github.com/boostorg/boost.git'
+        url = 'git@github.com:boostorg/boost.git'
         tag = 'boost-1.56.0'
         abspath = path.abspath (path.join (prefix, self.__location__))
         Git.checkout (url, abspath, branch=tag)
