@@ -52,8 +52,9 @@ class Project:
     #
     # @param            prefix          Location to download
     # @param            use_trunk       Flag to download trunk version instead of stable
+    # @param            use_https       Flag to download via git using https:// instead of git://
     #
-    def download (self, prefix, use_trunk):
+    def download (self, prefix, use_trunk, use_https):
         pass
 
     #

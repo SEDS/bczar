@@ -43,7 +43,7 @@ class MpcProject (Project):
     # Downlaod the project's source files. The download can be from an online
     # archive, or a source code repository.
     #
-    def download (self, prefix, use_trunk):
+    def download (self, prefix, use_trunk, use_https):
         if use_trunk:
             url = 'https://svn.dre.vanderbilt.edu/DOC/MPC/trunk'
         else:

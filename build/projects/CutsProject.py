@@ -52,7 +52,7 @@ class CutsProject (Project):
     # Download the CUTS source files. The source files are taken from
     # trunk in the SVN repo.
     #
-    def download (self, prefix, use_trunk):
+    def download (self, prefix, use_trunk, use_https):
         if use_trunk:
             url = 'https://svn.cs.iupui.edu/repos/CUTS/trunk'
         else:

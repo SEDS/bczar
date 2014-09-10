@@ -51,7 +51,7 @@ class AdbcProject (Project):
     # Downlaod the project's source files. The download can be from an online
     # archive, or a source code repository.
     #
-    def download (self, prefix, use_trunk):
+    def download (self, prefix, use_trunk, use_https):
         url = 'https://svn.dre.vanderbilt.edu/DOC/ADBC/trunk'
         abspath = path.abspath (path.join (prefix, self.__location__))
         Subversion.checkout (url, abspath, 'anonymous', 'anonymous')

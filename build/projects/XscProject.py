@@ -49,7 +49,10 @@ class XscProject (Project):
     # Downlaod the project's source files. The download can be from an online
     # archive, or a source code repository.
     #
-    def download (self, prefix, use_trunk):
+    def download (self, prefix, use_trunk, use_https):
+        if use_https:
+            logging.getLogger ().warn ('XSC does not support HTTPS checkouts.  Using git://')
+
         url = 'git://git.dre.vanderbilt.edu/xsc/xsc.git'
         abspath = path.abspath (path.join (prefix, self.__location__))
         

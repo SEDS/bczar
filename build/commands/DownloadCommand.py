@@ -52,6 +52,10 @@ class DownloadCommand (Command):
                                   help = 'Use the trunk version for projects instead of stable',
                                   action = 'store_true')
 
+    download_parser.add_argument ('--use-https',
+                                  help = 'Use https:// when downloading via git [default is git://]',
+                                  action = 'store_true')
+
     download_parser.set_defaults (cmd = DownloadCommand)
 
   #
@@ -59,6 +63,7 @@ class DownloadCommand (Command):
   #
   def init (self, args):
     self.__use_trunk__ = args.use_trunk
+    self.__use_https__ = args.use_https
   
   #
   # Execute the command
@@ -80,7 +85,7 @@ class DownloadCommand (Command):
     for proj in workspace.order_projects ():
         # Download the project.
         logging.getLogger ().info ('downloading {0}...'.format (proj.name ()))
-        proj.download (prefix, self.__use_trunk__)
+        proj.download (prefix, self.__use_trunk__, self.__use_https__)
         
         # Update the configuration scripts.
         proj.update_script (prefix, propfile)

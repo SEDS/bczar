@@ -46,7 +46,7 @@ class XercescProject (Project):
     # Download the Xerces-C source files. The source files are taken from
     # trunk in the SVN repo.
     #
-    def download (self, prefix, use_trunk):
+    def download (self, prefix, use_trunk, use_https):
         abspath = path.abspath (path.join (prefix, self.__location__))
         if not path.exists (abspath):
             from ..Utilities import autodetect_build_type
