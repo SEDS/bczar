@@ -17,6 +17,7 @@ import os
 import sys
 
 from os import path
+import logging
 
 #
 # __create__
@@ -96,7 +97,7 @@ class CutsProject (Project):
 
         if not url == new_url:
             import shutil
-            print ('*** info: CUTS repo has moved; updating...')
+            logging.getLogger ().info ('CUTS repo has moved; updating...')
 
             def error_handler (func, path, exc_info):
                 import stat
@@ -127,7 +128,7 @@ class CutsProject (Project):
     #
     def validate_environment (self):
         if 'CUTS_ROOT' not in os.environ:
-            print ('*** error: CUTS_ROOT environment variable is not defined')
+            logging.getLogger ().error ('CUTS_ROOT environment variable is not defined')
             return False
 
         return True
@@ -184,7 +185,7 @@ class CutsProject (Project):
             features = 'runtime=1,boost=1,xerces3=1,ccm=1,tcpip=1,sqlite3=1,pcre=1,mpi=0,xsc=1'
 
         if versioned_namespace:
-            print ('*** info: building with versioned namespace support')
+            logging.getLogger ().info ('building with versioned namespace support')
             features += ',versioned_namespace=1'
 
         # Set features that are based on the existence of third-party

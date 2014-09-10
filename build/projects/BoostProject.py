@@ -4,7 +4,7 @@
 #
 # @file        BoostProject.py
 #
-# $I`d: bczar.py 3656 2011-11-29 16:43:50Z hillj $
+# $Id: bczar.py 3656 2011-11-29 16:43:50Z hillj $
 #
 # @author      James H. Hill
 #
@@ -16,6 +16,7 @@ import sys
 from ..Project import Project
 from ..scm import Git
 from os import path
+import logging
 
 #
 # __create__
@@ -68,11 +69,11 @@ class BoostProject (Project):
     #
     def validate_environment (self):
         if 'BOOST_ROOT' not in os.environ:
-            print ('*** error: BOOST_ROOT environment variable is not defined')
+            logging.getLogger ().error ('BOOST_ROOT environment variable is not defined')
             return False
 
         if sys.platform == 'win32' and 'BOOST_VERSION' not in os.environ:
-            print ('*** error: BOOST_VERSION environment variable is not defined')
+            logging.getLogger ().error ('BOOST_VERSION environment variable is not defined')
             return False
 
         return True

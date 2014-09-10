@@ -15,6 +15,7 @@ from ..scm import Subversion
 
 import os
 from os import path
+import logging
 
 #
 # __create__
@@ -69,7 +70,7 @@ class AdbcProject (Project):
     #
     def validate_environment (self):
         if 'ADBC_ROOT' not in os.environ:
-            print ('*** error: ADBC_ROOT environment variable is not defined')
+            logging.getLogger ().error ('ADBC_ROOT environment variable is not defined')
             return False
 
         return True

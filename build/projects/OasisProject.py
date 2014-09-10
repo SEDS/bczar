@@ -16,6 +16,7 @@ from ..scm import Git
 
 import os
 from os import path
+import logging
 
 #
 # __create__
@@ -56,7 +57,7 @@ class OasisProject (Project):
         try:
           Git.checkout (url, abspath)
         except getopt.error as ex:
-          print ('*** error: Failed to download repo via IU Github, downloading from public Github')
+          logging.getLogger ().error ('Failed to download repo via IU Github, downloading from public Github')
           url = 'ssh://git@github.com/hilljh82/OASIS.git'
           Git.checkout (url, abspath)
 
@@ -76,7 +77,7 @@ class OasisProject (Project):
     #
     def validate_environment (self):
         if 'OASIS_ROOT' not in os.environ:
-            print ('*** error: OASIS_ROOT environment variable is not defined')
+            logging.getLogger ().error ('OASIS_ROOT environment variable is not defined')
             return False
 
         return True

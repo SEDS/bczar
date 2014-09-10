@@ -12,6 +12,7 @@
 
 import os
 import subprocess
+import logging
 
 #
 # Utility function for executing an SVN checkout
@@ -25,7 +26,7 @@ def checkout (url, location, username=None, password=None):
   from os import path
   
   if path.exists (os.path.join (location, '.svn')):
-    print ('*** info: %s is not an empty directory; skipping download' % location)
+    logging.getLogger ().info ('{0} is not an empty directory; skipping download'.format (location))
     return
 
   cmd = ["svn", "--non-interactive", "--trust-server-cert", "co", url, location]
@@ -89,5 +90,5 @@ def latest_version (url, prefix, version_format, username=None, password=None):
     url += '/'
 
   results.sort (key=LooseVersion)
-  print ('*** info: %s is the latest version' % results[-1])
+  logging.getLogger ().info ('{0} is the latest version'.format (results[-1]))
   return urljoin (url, results[-1])

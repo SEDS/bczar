@@ -15,6 +15,7 @@ from os import path
 
 import subprocess
 import sys
+import logging
 
 #
 # @class MpcWorkspace
@@ -91,7 +92,7 @@ class MpcWorkspace:
                     cmd.append (macro)
 
             else:
-                print ("*** error: unsupported build type")
+                logging.getLogger ().error ("unsupported build type")
                 sys.exit (1)
 
         # Execute the build command
@@ -129,7 +130,7 @@ class MpcWorkspace:
             cmd.append ('realclean')
 
         else:
-            print ("*** error: unsupported build type")
+            logging.getLogger ().error ("unsupported build type")
             sys.exit (1)
 
         # Execute the build command

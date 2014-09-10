@@ -16,6 +16,7 @@ import sys
 
 from ..Project import Project
 from os import path
+import logging
 
 #
 # __create__
@@ -127,7 +128,7 @@ class SQLiteProject (Project):
     #
     def validate_environment (self):
         if 'SQLITE_ROOT' not in os.environ:
-            print ('*** error: SQLITE_ROOT environment variable is not defined')
+            logging.getLogger ().error ('SQLITE_ROOT environment variable is not defined')
             return False
 
         return True

@@ -28,10 +28,15 @@ class DependsCommand (Command):
     return 'depends' 
 
   #
-  # Get the commands description
-  # 
-  def description (self):
-    return "List the dependencies of all projects in the workspace"
+  # Initalize the parser
+  #
+  @staticmethod
+  def init_parser (parser):
+    depends_parser = parser.add_parser ('depends',
+                                        help = 'List dependencies for all projects in the workspace',
+                                        description = 'List dependencies for all projects in the workspace')
+
+    depends_parser.set_defaults (cmd = DependsCommand)
 
   #
   # Execute the command

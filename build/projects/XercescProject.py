@@ -16,6 +16,7 @@ import sys
 from os import path
 from ..scm import Subversion
 from ..Project import Project
+import logging
 
 #
 # __create__
@@ -85,7 +86,7 @@ class XercescProject (Project):
                 
                 os.remove (localfile)
         else:
-            print ('*** info: ' + abspath + ' already exists; skipping...')
+            logging.getLogger ().info ('{0} already exists; skipping...'.format (abspath))
 
     #
     # Set the project's environment variables.
@@ -101,7 +102,7 @@ class XercescProject (Project):
     #
     def validate_environment (self):
         if 'XERCESCROOT' not in os.environ:
-            print ('*** error: XERCESCROOT environment variable is not defined')
+            logging.getLogger ().error ('XERCESCROOT environment variable is not defined')
             return False
 
         return True
@@ -164,7 +165,7 @@ class XercescProject (Project):
                 for file in os.listdir (outdir):
                     path = os.path.normpath (os.path.join (outdir, file))
                     if os.path.isfile (path):
-                        print ('*** info: copying %s to %s' % (path, libpath))
+                        logging.getLogger ().info ('copying {0} to {1}'.format (path, libpath))
                         shutil.copy (path, libpath)
 
             # Now that we are done building the project, we need to
@@ -176,7 +177,7 @@ class XercescProject (Project):
                 shutil.rmtree (include)
 
             def copytree_callback (root, files):
-                print ('*** info: copying files in %s' % root)
+                logging.getLogger ().info ('copying files in {0}'.format (root))
 
                 excludes = ['.svn']
                 exts = ['.hpp', '.c']

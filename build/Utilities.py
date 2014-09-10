@@ -12,6 +12,7 @@
 
 import os
 import sys
+import logging
 
 #
 # Test if the script is running on a Windows platform.
@@ -23,7 +24,7 @@ def is_windows_platform ():
 # Utility function to append a value to the PATH variable
 #
 def append_path_variable (value):
-  print ("*** appending %s to PATH" % value)
+  logging.getLogger ().info ("appending {0} to PATH".format (value))
 
   if is_windows_platform ():
     if 'PATH' in os.environ:
@@ -41,7 +42,7 @@ def append_path_variable (value):
 # on the platform, this can be PATH, LD_LIBRARY_PATH, or DYLD_LIBRARY_PATH.
 #
 def append_libpath_variable (value):
-  print ("*** appending %s to library path" % value)
+  logging.getLogger ().info ("appending {0} to library path".format (value))
 
   if is_windows_platform ():
     if 'PATH' in os.environ:
@@ -68,10 +69,10 @@ def append_libpath_variable (value):
 def download_url (url, target):
   import urllib.request
   
-  print ('*** info: downloading ' + url)
+  logging.getLogger ().info ("downloading {0}".format (url))
   webfile = urllib.request.urlopen (url)
   
-  print ('*** info: saving file to ' + target)
+  logging.getLogger ().info ("saving file to {0}".format (target))
   local_file = open (target, 'wb')
   local_file.write (webfile.read ())
   
@@ -88,7 +89,7 @@ def download_url (url, target):
 # @param[in]            path                Location to unpackage content
 #
 def unpackage_archive (archive, path):
-  print ('*** info: extracting contents of ' + archive + ' to ' + path)
+  logging.getLogger ().info ("extracting contents of {0} to {1}".format (archive, path))
 
   if archive.endswith ('.tar.gz') or archive.endswith ('.tar'):
     import tarfile
@@ -117,8 +118,8 @@ def get_vc_executable ():
     for file in files:
       if os.path.exists (os.path.join (PATH, file)):
         if file == 'VCExpress.exe':
-          print ('*** warning: express edition does not show compile progress...')
-          print ('*** warning: please be patient...')
+          logging.getLogger ().warning ('express edition does not show compile progress...')
+          logging.getLogger ().warning ('please be patient...')
 
         return file
 

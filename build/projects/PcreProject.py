@@ -17,6 +17,7 @@ import os
 import sys
 
 from os import path
+import logging
 
 #
 # __create__
@@ -74,7 +75,7 @@ class PcreProject (Project):
     #
     def validate_environment (self):
         if 'PCRE_ROOT' not in os.environ:
-            print ('*** error: PCRE_ROOT environment variable is not defined')
+            logging.getLogger ().error ('PCRE_ROOT environment variable is not defined')
             return False
 
         return True
@@ -108,7 +109,7 @@ class PcreProject (Project):
 
         if sys.platform == 'win32':
             import shutil
-            print ("*** info: configuring pcre for Windows...")
+            logging.getLogger ().info ("configuring pcre for Windows...")
             
             # 0. Define the config.h file.
             config = """
@@ -236,7 +237,7 @@ workspace (pcre) {
                 shutil.rmtree (pcre_include)
                 
             def copytree_includes (root, files):
-                print ('*** info: copying files in %s' % root)
+                logging.getLogger ().info ('copying files in %s' % root)
                 
                 exts = ['.h']
 

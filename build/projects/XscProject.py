@@ -14,6 +14,7 @@ from ..Project import Project
 
 import os
 from os import path
+import logging
 
 #
 # __create__
@@ -69,7 +70,7 @@ class XscProject (Project):
     #
     def validate_environment (self):
         if 'XSC_ROOT' not in os.environ:
-            print ('*** error: XSC_ROOT environment variable is not defined')
+            logging.getLogger ().error ('XSC_ROOT environment variable is not defined')
             return False
 
         return True

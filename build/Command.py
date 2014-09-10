@@ -23,12 +23,13 @@ class Command:
     #
     def name (self):
         yield
-        
+
     #
-    # A description of the command.
+    # Initalize the parser
     #
-    def description (self):
-        return ''
+    @staticmethod
+    def init_parser (parser):
+        pass
     
     #
     # Initialize the command with the provided arguments.
@@ -42,10 +43,3 @@ class Command:
     #
     def execute (self, workspace, prefix):
         pass
-    
-    #
-    # Print help information about the command.
-    #
-    def print_help (self):
-        pass
-    

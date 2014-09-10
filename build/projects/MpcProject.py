@@ -15,6 +15,7 @@ from ..scm import Subversion
 
 import os
 from os import path
+import logging
 
 #
 # __create__
@@ -67,7 +68,7 @@ class MpcProject (Project):
         import subprocess
 
         if 'MPC_ROOT' not in os.environ:
-            print ('*** error: MPC_ROOT environment variable is not defined')
+            logging.getLogger ().error ('MPC_ROOT environment variable is not defined')
             return False
 
         subprocess.check_call (["perl", "-v"])

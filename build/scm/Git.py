@@ -12,6 +12,7 @@
 
 import os
 import subprocess
+import logging
 
 #
 # Utility function for executing an SVN checkout
@@ -27,7 +28,7 @@ def checkout (url, location, username=None, password=None, branch=None):
   from urllib.parse import urlparse, urlunparse
 
   if path.exists (os.path.join (location, '.git')):
-    print ('*** info: %s is not an empty directory; skipping download' % location)
+    logging.getLogger ().info ('{0} is not an empty directory; skipping download'.format (location))
     return
 
   if not 'GIT_SSL_NO_VERIFY' in os.environ:

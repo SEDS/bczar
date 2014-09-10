@@ -10,49 +10,44 @@
 #
 ###############################################################################
 
-import getopt
 import os
 import sys
+import argparse
+import logging
 
 #
-# Display the help screen to the user. This function does not
-# return control to the caller. Instead, it exits the system.
+# Factory method to create a commandline parser
+# returns an argparse.ArgumentParser
 #
-def print_help (action = None):
-    usage = """Setup the environment for building SEM source code
+def create_parser ():
+    # create the common parser
+    top_level_parser = argparse.ArgumentParser ()
+    top_level_parser.add_argument ('--prefix', '-p',
+                                   help = 'Target location of sandbox [default=.]',
+                                   default = os.path.curdir,
+                                   metavar = 'PATH',
+                                   type = str)
 
-USAGE: bczar.py [OPTIONS] [COMMAND] [COMMAND OPTIONS]
+    top_level_parser.add_argument ('--includes', '-i',
+                                   help = 'Comma separated list of projects to include',
+                                   metavar = 'PROJECTS',
+                                   type = str)
 
-General Options:
-  --prefix=PATH                     Target location of sandbox [default=.]
- 
-  --include=PROJECTS                Comma separated list of projects to include
-  --exclude=PROJECTS                Comma separated list of projects to exclude
+    top_level_parser.add_argument ('--excludes', '-e',
+                                   help = 'Comma separated list of projects to exclude',
+                                   metavar = 'PROJECTS',
+                                   type = str)
 
-  --ignore-depends                  Ignore dependency projects during action
+    top_level_parser.add_argument ('--ignore-depends',
+                                   help = 'Ignore dependency projects during action',
+                                   action = 'store_true')
 
-Print Options:
-  -h, --help [COMMAND]              Print this help information
-"""
-    # Print the generic help information.
-    print (usage)
+    subparsers = top_level_parser.add_subparsers (help = 'sub-command help')
 
-    commands = get_commands ()
+    for command in get_commands ():
+        command.init_parser (subparsers)
 
-    if action is None:
-        # Print a list of supported actions.
-        print ('The following is a list of supported commands:')
-
-        for command in commands:
-            print ('  %s - %s' % (command.name (), command.description ()))
-    else:
-        for command in commands:
-            if command.name () == action:
-                print ('Command Options:')
-                command.print_help ()
-                break
-        
-    sys.exit (2)
+    return top_level_parser
 
 #
 # Dynamically import objects located on disk
@@ -81,7 +76,7 @@ def import_objects (prefix, imports, factory):
             eval_str = 'hook.%s ()' % factory
             objects.append (eval (eval_str))
         else:
-            print ("*** warning: skipping %s; %s not defined" % (module_name, factory))
+            logging.getLogger ().warning ('skipping {0}; {1} not defined'.format (module_name, factory))
     
     return objects
 
@@ -108,57 +103,28 @@ def main ():
             print ("*** error: Python 3 is required")
             sys.exit (1)
 
+    # setup the logging format
+    logging.basicConfig (format='*** %(levelname)s: %(message)s', level = logging.INFO)
+
     try:
         # Parse the command-line arguments.
-        opts, args = getopt.getopt (sys.argv[1:],
-                                    'hlp:',
-                                    ['help', 'prefix=',
-                                     'exclude=', 'include=',
-                                     'ignore-depends'])
-        
-        #
-        # @class ScriptOpts
-        #
-        # Configuration options for the script.
-        #
-        class ScriptOpts :
-            # The default prefix location.
-            prefix = '.'
-               
-            # List of projects to exclude from operation
-            excludes = []
-            
-            # List of projects to include in the operation.
-            includes = []
-            
-            # Ignore the dependency projects
-            ignore_depends = False
-            
-        the_opts = ScriptOpts ()
+        parser = create_parser ()
+        the_opts = parser.parse_args ()
 
-        for o, a in opts:
-            if o == '--prefix':
-                the_opts.prefix = a
+        # split the list of includes/excludes
+        if the_opts.includes is not None:
+            the_opts.includes = the_opts.includes.split(',')
+        else:
+            the_opts.includes = []
 
-            elif o in ('-h', '--help'):
-                if len (args):
-                    print_help (args[0])
-                else:
-                    print_help ()
+        if the_opts.excludes is not None:
+            the_opts.excludes = the_opts.excludes.split(',')
+        else:
+            the_opts.excludes = []
 
-            elif o == '--exclude':
-                the_opts.excludes.extend (a.split (','))
+        # uncomment to see the options printed (e.g. 'Namespace(...)')
+        logging.getLogger ().debug ('Script options:\n\t{0}'.format (the_opts))
 
-            elif o == '--include':
-                the_opts.includes.extend (a.split (','))
-                
-            elif o == '--ignore-depends':
-                the_opts.ignore_depends = True
-
-        if len (args) == 0:
-            print ("*** error: missing command")
-            sys.exit (1)
-            
         #
         # Test if a project is enabled. The project is enabled it appears
         # in the includes listing, or it does not appear in the excludes
@@ -177,7 +143,6 @@ def main ():
         # in the excludes section. For those project that are enabled, we
         # are going to add them to a workspace.
         projects = get_projects ()
-        commands = get_commands ()
         
         from build.Workspace import Workspace
         
@@ -208,20 +173,13 @@ def main ():
         if not os.path.exists (the_opts.prefix):
             os.makedirs (the_opts.prefix)
 
-        # Execute the command on the projects.
-        cmdstr = args[0]
-        
-        for command in commands:
-            if cmdstr == command.name ():
-                command.init (args[1:])
-                command.execute (workspace, the_opts.prefix)
-                sys.exit (0)
-            
-        print ('*** error: <%s> is an unknown command' % cmdstr)
-        sys.exit (1)
+        # Execute the command on the workspace.
+        command = the_opts.cmd ()
+        command.init (the_opts)
+        command.execute (workspace, the_opts.prefix)
 
-    except getopt.error as ex:
-        print ("*** error: " + ex.args[0])
+    except Exception as ex:
+        logging.getLogger ().error (ex)
         sys.exit (1)
 
 #

@@ -16,6 +16,7 @@ from ..scm import Subversion
 import os
 from os import path
 import subprocess
+import logging
 
 #
 # __create__
@@ -86,7 +87,7 @@ class DocMiddlewareProject (Project):
            ('TAO_ROOT' not in os.environ) or \
            ('CIAO_ROOT' not in os.environ) or \
            ('DANCE_ROOT' not in os.environ):
-            print ('*** error: DOC middleware environment variable(s) are not defined')
+            logging.getLogger ().error ('DOC middleware environment variable(s) are not defined')
             return False
 
         return True
@@ -135,7 +136,7 @@ class DocMiddlewareProject (Project):
         # We need to define the platform_macros.GNU script if we are not
         # running on a Windows environment.
         if not (sys.platform == 'win32'):
-          print ('*** info: defining platform_macros.GNU')
+          logging.getLogger ().info ('defining platform_macros.GNU')
 
           if sys.platform == 'darwin':
             # Use the version number to select the correct platform.
@@ -198,7 +199,7 @@ class DocMiddlewareProject (Project):
 
             params = { 'config_file' : config_file }
 
-            print ('*** info: creating default ace/config.h file')
+            logging.getLogger ().info ('creating default ace/config.h file')
             config = open (filename, 'w')
 
             config.write (tmpl.substitute (params))

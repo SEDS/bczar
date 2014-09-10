@@ -31,10 +31,14 @@ class ListProjectsCommand (Command):
     return 'list'
   
   #
-  # Get a description of the command
+  # Initalize the parser
   #
-  def description (self):
-    return "List all projects in the workspace"
+  @staticmethod
+  def init_parser (parser):
+    list_parser = parser.add_parser ('list',
+                                      help = 'List all projects in the workspace',
+                                      description = 'List all projects in the workspace')
+    list_parser.set_defaults (cmd = ListProjectsCommand)
 
   #
   # Execute the command

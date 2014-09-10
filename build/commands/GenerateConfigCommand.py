@@ -14,6 +14,7 @@ from ..Command import Command
 
 import os
 from os import path
+import logging
 
 #
 # Factory method for the command
@@ -34,10 +35,14 @@ class GenerateConfigCommand (Command):
     return 'genconfig'
 
   #
-  # Get the commands description
-  # 
-  def description (self):
-    return "Generate the workspace's configuration file"
+  # Initalize the parser
+  #
+  @staticmethod
+  def init_parser (parser):
+    genconfig_parser = parser.add_parser ('genconfig',
+                                          help = 'Generate the workspace\'s configuration file',
+                                          description = 'Generate the workspace\'s configuration file')
+    genconfig_parser.set_defaults (cmd = GenerateConfigCommand)
 
   #
   # Execute the command
@@ -54,7 +59,7 @@ class GenerateConfigCommand (Command):
     script = open_script_file (prefix)
     
     for proj in workspace.get_projects ():
-      print ('*** info: updating script for %s...' % proj.name ())
+      logging.getLogger ().info ('updating script for {0}...'.format (proj.name ()))
       proj.update_script (prefix, propfile)
       proj.update_script (prefix, script)  
 

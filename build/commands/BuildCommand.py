@@ -13,6 +13,7 @@
 import getopt
 import os
 import sys
+import logging
 
 from ..Command import Command
 
@@ -38,24 +39,31 @@ class BuildCommand (Command):
     return 'build'
   
   #
-  # Get the command's description
+  # Initalize the parser
   #
-  def description (self):
-    return 'Build all projects in the workspace'
+  @staticmethod
+  def init_parser (parser):
+    build_parser = parser.add_parser ('build',
+                                       help = 'Build all the projects in the workspace',
+                                       description = 'Build all the projects in the workspace')
+
+    build_parser.add_argument ('--versioned-namespace', '-v',
+                               help = 'Build with versioned namespace support',
+                               action = 'store_true')
+
+    build_parser.add_argument ('--clean', '-x',
+                               help = 'Clean the projects',
+                               action = 'store_true')
+
+    # cmd distinguishes which parser was called (and therefor which command to execute)
+    build_parser.set_defaults (cmd = BuildCommand)
 
   #
   # Initialize the command object
   #
   def init (self, args):
-    # Parse the command-line arguments.
-    long_options = ['versioned-namespace', 'clean']
-    opts, args = getopt.getopt (args, '', long_options)
-    
-    for o, a in opts:
-        if o == "--versioned-namespace":
-          self.__versioned_namespace__ = True
-        elif o == '--clean':
-          self.__clean__ = True
+      self.__versioned_namespace__ = args.versioned_namespace
+      self.__clean__ = args.clean
   
   #
   # Execute the command
@@ -70,33 +78,23 @@ class BuildCommand (Command):
     build_type = autodetect_build_type ()
 
     # Validate build environment
-    print ('*** info: validating build environment')
+    logging.getLogger ().info ('validating build environment')
     for proj in workspace.order_projects ():
         if not proj.validate_environment ():
             sys.exit (1)
     
     if (self.__versioned_namespace__):
-        print ('*** info: building projects with versioned namespace support')
+        logging.getLogger ().info ('building projects with versioned namespace support')
         
     if (self.__clean__):
       for proj in workspace.order_projects ():
-          print ('*** info: cleaning %s...' % proj.name ())
+          logging.getLogger ().info ('cleaning {0}...'.format (proj.name ()))
           proj.clean (prefix, build_type, self.__versioned_namespace__)
     else:
       for proj in workspace.order_projects ():
-          print ('*** info: building %s...' % proj.name ())
+          logging.getLogger ().info ('building {0}...'.format (proj.name ()))
           proj.build (prefix, build_type, self.__versioned_namespace__)
       
-  #
-  # Print command help information
-  #
-  def print_help (self):
-    usage = """  --versioned-namespace             Build with versioned namespace support
-  --clean                           Clean the projects               
-"""
-
-    print (usage)
-
 
 #
 # Utility method that configures the enviroment using the properties
@@ -105,7 +103,7 @@ class BuildCommand (Command):
 # @param          prefix          Location of property file 
 #
 def configure_environment (prefix):
-  print ("*** info: configuring the enviroment")
+  logging.getLogger ().info ("configuring the enviroment")
   # Load the existing properties file into memory and use it
   # to configure our execution environment, if the file does
   # indeed exist.
@@ -114,7 +112,7 @@ def configure_environment (prefix):
   if os.path.exists (properties_filename):
       # Read the properties from the file, and update the
       # environment variables.
-      print ('*** info: loading properties from %s' % properties_filename)
+      logging.getLogger ().info ('loading properties from {0}'.format (properties_filename))
 
       from ..scripts import PropertiesFile
       props = PropertiesFile.PropertiesFile.read (properties_filename)
@@ -129,6 +127,6 @@ def configure_environment (prefix):
           else:
               os.environ[key] = value
   else:
-      print ('*** error: %s does not exist' % properties_filename)
+      logging.getLogger ().error ('{0} does not exist'.format (properties_filename))
 
 
