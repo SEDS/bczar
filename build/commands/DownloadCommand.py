@@ -32,7 +32,18 @@ class DownloadCommand (Command):
   __use_trunk__= False
   __username__ = None
   __password__ = None
-  
+
+  #
+  # @class Context
+  #
+  # Simple object that aggregates the various parameters used for downloading
+  class Context:
+    def __init__ (self):
+      self.use_trunk = False
+      self.use_https = False
+      self.workspace = None
+      self.prefix = '.'
+
   #
   # Get the command's name
   #
@@ -62,13 +73,17 @@ class DownloadCommand (Command):
   # Initialize the command object
   #
   def init (self, args):
-    self.__use_trunk__ = args.use_trunk
-    self.__use_https__ = args.use_https
+    self.__context__ = DownloadCommand.Context ()
+    self.__context__.use_trunk = args.use_trunk
+    self.__context__.use_https = args.use_https
   
   #
   # Execute the command
   #
   def execute (self, workspace, prefix):
+    self.__context__.workspace = workspace
+    self.__context__.prefix = prefix
+
     # Open the script files where we are going to generate the
     # configuration for the prefix.
     # Open the properties for the file.
@@ -85,7 +100,7 @@ class DownloadCommand (Command):
     for proj in workspace.order_projects ():
         # Download the project.
         logging.getLogger ().info ('downloading {0}...'.format (proj.name ()))
-        proj.download (prefix, self.__use_trunk__, self.__use_https__)
+        proj.download (self.__context__)
         
         # Update the configuration scripts.
         proj.update_script (prefix, propfile)

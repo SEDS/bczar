@@ -180,7 +180,7 @@ def main ():
 
     except Exception as ex:
         logging.getLogger ().error (ex)
-        sys.exit (1)
+        raise
 
 #
 # Invoke the main entry point, if applicable.

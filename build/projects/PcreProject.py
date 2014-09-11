@@ -52,13 +52,13 @@ class PcreProject (Project):
     # Downlaod the project's source files. The download can be from an online
     # archive, or a source code repository.
     #
-    def download (self, prefix, use_trunk, use_https):
-        if use_trunk:
+    def download (self, ctx):
+        if ctx.use_trunk:
             url = 'svn://vcs.exim.org/pcre/code/trunk'
         else:
             url = 'svn://vcs.exim.org/pcre/code/tags/pcre-8.21'
             
-        abspath = path.abspath (path.join (prefix, self.__location__))
+        abspath = path.abspath (path.join (ctx.prefix, self.__location__))
         Subversion.checkout (url, abspath)
 
     #

@@ -43,13 +43,13 @@ class MpcProject (Project):
     # Downlaod the project's source files. The download can be from an online
     # archive, or a source code repository.
     #
-    def download (self, prefix, use_trunk, use_https):
-        if use_trunk:
+    def download (self, ctx):
+        if ctx.use_trunk:
             url = 'https://svn.dre.vanderbilt.edu/DOC/MPC/trunk'
         else:
             url = 'https://svn.dre.vanderbilt.edu/DOC/MPC/tags/ACE+TAO+CIAO-6_1_8'
             
-        abspath = path.abspath (path.join (prefix, self.__location__))
+        abspath = path.abspath (path.join (ctx.prefix, self.__location__))
         Subversion.checkout (url, abspath, 'anonymous', 'anonymous')
         
     #
