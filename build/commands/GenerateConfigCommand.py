@@ -11,6 +11,7 @@
 ################################################################################
 
 from ..Command import Command
+from ..Context import Context
 
 import os
 from os import path
@@ -21,6 +22,21 @@ import logging
 #
 def __create__ ():
   return GenerateConfigCommand ()
+
+#
+# @class GenerateConfigContext
+#
+class GenerateConfigContext (Context):
+  @staticmethod
+  def init_parser (parser):
+    genconfig_parser = parser.add_parser ('genconfig',
+                                          help = 'Generate the workspace\'s configuration file',
+                                          description = 'Generate the workspace\'s configuration file')
+    genconfig_parser.set_defaults (cmd = GenerateConfigCommand)
+    genconfig_parser.set_defaults (ctx = GenerateConfigContext)
+
+  def __init__ (self, args):
+    Context.__init__ (self, args)
   
 #   
 # @class GenerateConfigCommand
@@ -28,6 +44,8 @@ def __create__ ():
 # Command that generates the configuration files for a workspace.
 #
 class GenerateConfigCommand (Command):  
+  context = GenerateConfigContext
+
   #
   # Get the command's name
   #
@@ -35,33 +53,23 @@ class GenerateConfigCommand (Command):
     return 'genconfig'
 
   #
-  # Initalize the parser
-  #
-  @staticmethod
-  def init_parser (parser):
-    genconfig_parser = parser.add_parser ('genconfig',
-                                          help = 'Generate the workspace\'s configuration file',
-                                          description = 'Generate the workspace\'s configuration file')
-    genconfig_parser.set_defaults (cmd = GenerateConfigCommand)
-
-  #
   # Execute the command
   #
-  def execute (self, workspace, prefix):
+  def execute (self, ctx):
     # Open the properties for the file.
-    properties_filename = path.join (prefix, 'configure.properties')
+    properties_filename = path.join (ctx.prefix, 'configure.properties')
     
     from ..scripts import PropertiesFile
     propfile = PropertiesFile.PropertiesFile ()
     propfile.open (properties_filename)
     
     # Open the script file for writing.
-    script = open_script_file (prefix)
+    script = open_script_file (ctx.prefix)
     
-    for proj in workspace.get_projects ():
+    for proj in ctx.workspace.get_projects ():
       logging.getLogger ().info ('updating script for {0}...'.format (proj.name ()))
-      proj.update_script (prefix, propfile)
-      proj.update_script (prefix, script)  
+      proj.update_script (ctx.prefix, propfile)
+      proj.update_script (ctx.prefix, script)  
 
 #
 # Helper method that open the script file for the correct

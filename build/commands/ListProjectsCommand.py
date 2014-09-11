@@ -11,19 +11,37 @@
 ################################################################################
 
 from ..Command import Command
+from ..Context import Context
 
 #
 # Factory method for the command
 #
 def __create__ ():
   return ListProjectsCommand ()
-  
+
+#
+# @class ListProjectsContext
+#
+class ListProjectsContext (Context):
+  @staticmethod
+  def init_parser (parser):
+    list_parser = parser.add_parser ('list',
+                                      help = 'List all projects in the workspace',
+                                      description = 'List all projects in the workspace')
+    list_parser.set_defaults (cmd = ListProjectsCommand)
+    list_parser.set_defaults (ctx = ListProjectsContext)
+
+  def __init__ (self, args):
+    Context.__init__ (self, args)
+
 #
 # @class ListProjectsCommand
 #
 # This command will list all the projects in the workspace.
 #
 class ListProjectsCommand (Command):
+  context = ListProjectsContext
+
   #
   # Get the command's name.
   #
@@ -31,21 +49,11 @@ class ListProjectsCommand (Command):
     return 'list'
   
   #
-  # Initalize the parser
-  #
-  @staticmethod
-  def init_parser (parser):
-    list_parser = parser.add_parser ('list',
-                                      help = 'List all projects in the workspace',
-                                      description = 'List all projects in the workspace')
-    list_parser.set_defaults (cmd = ListProjectsCommand)
-
-  #
   # Execute the command
   #
-  def execute (self, workspace, prefix):
+  def execute (self, ctx):
     # List the projects that are known to this script.
     print ("The following is a list of known projects:")
     
-    for proj in workspace.get_projects ():
+    for proj in ctx.workspace.get_projects ():
       print (" . %s" % proj.name ())    

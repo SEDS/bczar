@@ -16,31 +16,18 @@ import sys
 import logging
 
 from ..Command import Command
+from ..Context import Context
 
 #
 # Factory method for the command
 #
 def __create__ ():
   return BuildCommand ()
-  
-#   
-# @class BuildCommand
+
 #
-# Command that builds all projects in the workspace.
+# @class BuildContext
 #
-class BuildCommand (Command):
-  __versioned_namespace__ = False
-  __clean__ = False
-  
-  #
-  # Get the command's name
-  #
-  def name (self):
-    return 'build'
-  
-  #
-  # Initalize the parser
-  #
+class BuildContext (Context):
   @staticmethod
   def init_parser (parser):
     build_parser = parser.add_parser ('build',
@@ -55,23 +42,35 @@ class BuildCommand (Command):
                                help = 'Clean the projects',
                                action = 'store_true')
 
-    # cmd distinguishes which parser was called (and therefor which command to execute)
     build_parser.set_defaults (cmd = BuildCommand)
+    build_parser.set_defaults (ctx = BuildContext)
 
+  def __init__ (self, args):
+    Context.__init__ (self, args)
+    self.versioned_namespace = args.versioned_namespace
+    self.clean = args.clean
+
+#   
+# @class BuildCommand
+#
+# Command that builds all projects in the workspace.
+#
+class BuildCommand (Command):
+  context = BuildContext
+  
   #
-  # Initialize the command object
+  # Get the command's name
   #
-  def init (self, args):
-      self.__versioned_namespace__ = args.versioned_namespace
-      self.__clean__ = args.clean
+  def name (self):
+    return 'build'
   
   #
   # Execute the command
   #
-  def execute (self, workspace, prefix):
+  def execute (self, ctx):
     # First, configure the environment so the build does not fail
     # because of missing environment variables.
-    configure_environment (prefix)
+    configure_environment (ctx.prefix)
     
     # Auto-detect the build type.
     from ..Utilities import autodetect_build_type
@@ -79,21 +78,21 @@ class BuildCommand (Command):
 
     # Validate build environment
     logging.getLogger ().info ('validating build environment')
-    for proj in workspace.order_projects ():
+    for proj in ctx.workspace.order_projects ():
         if not proj.validate_environment ():
             sys.exit (1)
     
-    if (self.__versioned_namespace__):
+    if (ctx.versioned_namespace):
         logging.getLogger ().info ('building projects with versioned namespace support')
         
-    if (self.__clean__):
-      for proj in workspace.order_projects ():
+    if (ctx.clean):
+      for proj in ctx.workspace.order_projects ():
           logging.getLogger ().info ('cleaning {0}...'.format (proj.name ()))
-          proj.clean (prefix, build_type, self.__versioned_namespace__)
+          proj.clean (ctx.prefix, build_type, ctx.versioned_namespace)
     else:
-      for proj in workspace.order_projects ():
+      for proj in ctx.workspace.order_projects ():
           logging.getLogger ().info ('building {0}...'.format (proj.name ()))
-          proj.build (prefix, build_type, self.__versioned_namespace__)
+          proj.build (ctx.prefix, build_type, ctx.versioned_namespace)
       
 
 #
@@ -128,5 +127,4 @@ def configure_environment (prefix):
               os.environ[key] = value
   else:
       logging.getLogger ().error ('{0} does not exist'.format (properties_filename))
-
 
