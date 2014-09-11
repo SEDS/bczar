@@ -47,11 +47,11 @@ class SQLiteProject (Project):
     # Downlaod the project's source files. The download can be from an online
     # archive, or a source code repository.
     #
-    def download (self, prefix, use_trunk):
+    def download (self, ctx):
         from ..Utilities import download_url
         from ..Utilities import unpackage_archive
 
-        abspath = path.abspath (path.join (prefix, self.__sqlite_basename__))
+        abspath = path.abspath (path.join (ctx.prefix, self.__sqlite_basename__))
 
         if not path.exists (abspath):
             # Download the SQLite source files, which are provided in a tarball
@@ -63,12 +63,12 @@ class SQLiteProject (Project):
                 sqlite_archive = self.__sqlite_basename__ + '.tar.gz'
 
             sqlite_url = 'http://www.sqlite.org/' + sqlite_archive
-            sqlite_localfile = path.join (prefix, sqlite_archive)
+            sqlite_localfile = path.join (ctx.prefix, sqlite_archive)
 
             download_url (sqlite_url, sqlite_localfile)
 
             # Unpackage the archive, and remove it from disk.
-            unpackage_archive (sqlite_localfile, path.abspath (prefix))
+            unpackage_archive (sqlite_localfile, path.abspath (ctx.prefix))
             os.remove (sqlite_localfile)
 
             if sys.platform == 'win32':
@@ -76,12 +76,12 @@ class SQLiteProject (Project):
                 # all the necessary files to build SQLite.
                 sqlite_archive = 'sqlite-dll-win32-x86-3070800.zip'
                 sqlite_url = 'http://www.sqlite.org/' + sqlite_archive
-                sqlite_localfile = path.join (prefix, sqlite_archive)
+                sqlite_localfile = path.join (ctx.prefix, sqlite_archive)
     
                 download_url (sqlite_url, sqlite_localfile)
     
                 # Unpackage the archive, and remove it from disk.
-                target = path.join (path.abspath (prefix), self.__sqlite_basename__)
+                target = path.join (path.abspath (ctx.prefix), self.__sqlite_basename__)
                 unpackage_archive (sqlite_localfile, target)
                 os.remove (sqlite_localfile)
     

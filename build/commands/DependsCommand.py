@@ -11,25 +11,18 @@
 ################################################################################
 
 from ..Command import Command
+from ..Context import Context
 
 #
 # Factory method for the command object
 #
 def __create__ ():
   return DependsCommand ()
-  
-#
-# @class  DependsCommand
-#
-# Command that list the dependencies of all projects in the workspace.
-#
-class DependsCommand (Command):
-  def name (self):
-    return 'depends' 
 
-  #
-  # Initalize the parser
-  #
+#
+# @class DependsContext
+#
+class DependsContext (Context):
   @staticmethod
   def init_parser (parser):
     depends_parser = parser.add_parser ('depends',
@@ -37,15 +30,30 @@ class DependsCommand (Command):
                                         description = 'List dependencies for all projects in the workspace')
 
     depends_parser.set_defaults (cmd = DependsCommand)
+    depends_parser.set_defaults (ctx = DependsContext)
+
+  def __init__ (self, args):
+    Context.__init__ (self, args)
+
+#
+# @class  DependsCommand
+#
+# Command that list the dependencies of all projects in the workspace.
+#
+class DependsCommand (Command):
+  context = DependsContext
+
+  def name (self):
+    return 'depends' 
 
   #
   # Execute the command
   #
-  def execute (self, workspace, prefix):
-    for proj in workspace.get_projects ():
+  def execute (self, ctx):
+    for proj in ctx.workspace.get_projects ():
       print ('')
       print ('%s Dependencies' % proj.name ())
       print ('======================================')
         
-      for depend in workspace.get_depends (proj.name ()):
+      for depend in ctx.workspace.get_depends (proj.name ()):
         print ('.', depend.name ()) 

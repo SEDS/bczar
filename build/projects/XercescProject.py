@@ -46,16 +46,13 @@ class XercescProject (Project):
     # Download the Xerces-C source files. The source files are taken from
     # trunk in the SVN repo.
     #
-    def download (self, prefix, use_trunk):
-        abspath = path.abspath (path.join (prefix, self.__location__))
+    def download (self, ctx):
+        abspath = path.abspath (path.join (ctx.prefix, self.__location__))
         if not path.exists (abspath):
             from ..Utilities import autodetect_build_type
             build_type = autodetect_build_type ()
 
-            if build_type == 'vc11':
-                use_trunk = True
-
-            if use_trunk:
+            if ctx.use_trunk or (build_type == 'vc11'):
                 url = 'https://svn.apache.org/repos/asf/xerces/c/trunk'
                 Subversion.checkout (url, abspath, 'anonymous', 'anonymous')
 
@@ -75,14 +72,14 @@ class XercescProject (Project):
                     archive = self._basename_ + '.tar.gz'
               
                 url = 'http://www.apache.org/dist/xerces/c/3/sources/' + archive
-                localfile = os.path.join (prefix, archive)
+                localfile = os.path.join (ctx.prefix, archive)
 
                 from ..Utilities import download_url
                 download_url (url, localfile)
 
                 # Unpackage the archive, and remove it from disk.
                 from ..Utilities import unpackage_archive
-                unpackage_archive (localfile, os.path.abspath (prefix))
+                unpackage_archive (localfile, os.path.abspath (ctx.prefix))
                 
                 os.remove (localfile)
         else:

@@ -44,10 +44,13 @@ class BoostProject (Project):
     # Download the Boost source files. The source files are taken from
     # trunk in the SVN repo.
     #
-    def download (self, prefix, use_trunk):
-        url = 'git@github.com:boostorg/boost.git'
+    def download (self, ctx):
+        if ctx.use_https:
+            url = 'https://github.com/boostorg/boost.git'
+        else:
+            url = 'git@github.com:boostorg/boost.git'
         tag = 'boost-1.56.0'
-        abspath = path.abspath (path.join (prefix, self.__location__))
+        abspath = path.abspath (path.join (ctx.prefix, self.__location__))
         Git.checkout (url, abspath, branch=tag)
 
     #

@@ -18,6 +18,9 @@ import getopt
 # Base class for all active commands of the build engine
 #
 class Command:
+    # Context to use for the Command, this should be the class name.
+    context = None
+
     #
     # The name of the command.
     #
@@ -25,21 +28,8 @@ class Command:
         yield
 
     #
-    # Initalize the parser
-    #
-    @staticmethod
-    def init_parser (parser):
-        pass
-    
-    #
-    # Initialize the command with the provided arguments.
-    #
-    def init (self, args):
-        pass
-    
-    #
-    # Execute the command. This is called after the command has
+    # Execute the command. This is called after the context has
     # been initialized.
     #
-    def execute (self, workspace, prefix):
+    def execute (self, context):
         pass

@@ -10,8 +10,8 @@
 #
 ################################################################################
 
-import getopt
 from ..Command import Command
+from ..Context import Context
 
 import os
 from os import path
@@ -22,26 +22,11 @@ import logging
 #
 def __create__ ():
   return DownloadCommand ()
-  
-#   
-# @class DownloadCommand
+
 #
-# Command that downloads all sources in the workspace.
+# @class DownloadContext
 #
-class DownloadCommand (Command):
-  __use_trunk__= False
-  __username__ = None
-  __password__ = None
-  
-  #
-  # Get the command's name
-  #
-  def name (self):
-    return 'download'
-  
-  #
-  # Initalize the parser
-  #
+class DownloadContext (Context):
   @staticmethod
   def init_parser (parser):
     download_parser = parser.add_parser ('download',
@@ -52,22 +37,40 @@ class DownloadCommand (Command):
                                   help = 'Use the trunk version for projects instead of stable',
                                   action = 'store_true')
 
+    download_parser.add_argument ('--use-https',
+                                  help = 'Use https:// when downloading via git [default is git://]',
+                                  action = 'store_true')
+
     download_parser.set_defaults (cmd = DownloadCommand)
+    download_parser.set_defaults (ctx = DownloadContext)
+
+  def __init__ (self, args):
+    Context.__init__ (self, args)
+    self.use_trunk = args.use_trunk
+    self.use_https = args.use_https
+
+#   
+# @class DownloadCommand
+#
+# Command that downloads all sources in the workspace.
+#
+class DownloadCommand (Command):
+  context = DownloadContext
 
   #
-  # Initialize the command object
+  # Get the command's name
   #
-  def init (self, args):
-    self.__use_trunk__ = args.use_trunk
+  def name (self):
+    return 'download'
   
   #
   # Execute the command
   #
-  def execute (self, workspace, prefix):
+  def execute (self, ctx):
     # Open the script files where we are going to generate the
     # configuration for the prefix.
     # Open the properties for the file.
-    properties_filename = path.join (prefix, 'configure.properties')
+    properties_filename = path.join (ctx.prefix, 'configure.properties')
     
     from ..scripts import PropertiesFile
     propfile = PropertiesFile.PropertiesFile ()
@@ -75,15 +78,14 @@ class DownloadCommand (Command):
     
     # Open the script file for writing.
     from .GenerateConfigCommand import open_script_file
-    script = open_script_file (prefix)
+    script = open_script_file (ctx.prefix)
     
-    for proj in workspace.order_projects ():
+    for proj in ctx.workspace.order_projects ():
         # Download the project.
         logging.getLogger ().info ('downloading {0}...'.format (proj.name ()))
-        proj.download (prefix, self.__use_trunk__)
+        proj.download (ctx)
         
         # Update the configuration scripts.
-        proj.update_script (prefix, propfile)
-        proj.update_script (prefix, script)
-
+        proj.update_script (ctx.prefix, propfile)
+        proj.update_script (ctx.prefix, script)
 

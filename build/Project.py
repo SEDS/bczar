@@ -50,10 +50,10 @@ class Project:
     # Download the project's source files. The download can be from an online
     # archive, or a source code repository.
     #
-    # @param            prefix          Location to download
-    # @param            use_trunk       Flag to download trunk version instead of stable
+    # @param            context         Context object containing various parameters for
+    #                                   managing the download
     #
-    def download (self, prefix, use_trunk):
+    def download (self, context):
         pass
 
     #

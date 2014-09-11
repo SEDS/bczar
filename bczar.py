@@ -14,6 +14,7 @@ import os
 import sys
 import argparse
 import logging
+from build.Context import Context
 
 #
 # Factory method to create a commandline parser
@@ -21,33 +22,15 @@ import logging
 #
 def create_parser ():
     # create the common parser
-    top_level_parser = argparse.ArgumentParser ()
-    top_level_parser.add_argument ('--prefix', '-p',
-                                   help = 'Target location of sandbox [default=.]',
-                                   default = os.path.curdir,
-                                   metavar = 'PATH',
-                                   type = str)
+    parser = argparse.ArgumentParser ()
+    Context.init_parser (parser)
 
-    top_level_parser.add_argument ('--includes', '-i',
-                                   help = 'Comma separated list of projects to include',
-                                   metavar = 'PROJECTS',
-                                   type = str)
-
-    top_level_parser.add_argument ('--excludes', '-e',
-                                   help = 'Comma separated list of projects to exclude',
-                                   metavar = 'PROJECTS',
-                                   type = str)
-
-    top_level_parser.add_argument ('--ignore-depends',
-                                   help = 'Ignore dependency projects during action',
-                                   action = 'store_true')
-
-    subparsers = top_level_parser.add_subparsers (help = 'sub-command help')
+    subparsers = parser.add_subparsers (help = 'sub-command help')
 
     for command in get_commands ():
-        command.init_parser (subparsers)
+        command.context.init_parser (subparsers)
 
-    return top_level_parser
+    return parser
 
 #
 # Dynamically import objects located on disk
@@ -111,19 +94,11 @@ def main ():
         parser = create_parser ()
         the_opts = parser.parse_args ()
 
-        # split the list of includes/excludes
-        if the_opts.includes is not None:
-            the_opts.includes = the_opts.includes.split(',')
-        else:
-            the_opts.includes = []
-
-        if the_opts.excludes is not None:
-            the_opts.excludes = the_opts.excludes.split(',')
-        else:
-            the_opts.excludes = []
-
         # uncomment to see the options printed (e.g. 'Namespace(...)')
         logging.getLogger ().debug ('Script options:\n\t{0}'.format (the_opts))
+
+        # Get the context, which handles the results from argparse
+        context = the_opts.ctx (the_opts)
 
         #
         # Test if a project is enabled. The project is enabled it appears
@@ -132,10 +107,10 @@ def main ():
         # enabled if it does not appear in the excludes listing.
         #
         def is_enabled (proj, ignore_includes = False):
-            if not ignore_includes and len (the_opts.includes) > 0:
-                return proj.name () in the_opts.includes
+            if not ignore_includes and len (context.includes) > 0:
+                return proj.name () in context.includes
             else:
-                return not proj.name () in the_opts.excludes
+                return not proj.name () in context.excludes
             
         # Get all the projects we know about. Regardless of what operation
         # we complete below, we need a list of all projects. Now, the list
@@ -146,7 +121,7 @@ def main ():
         
         from build.Workspace import Workspace
         
-        if len (the_opts.includes) or len (the_opts.excludes):
+        if context.includes or context.excludes:
             # Create an empty workspace.
             workspace = Workspace ()
             full_workspace = Workspace (projects)
@@ -158,7 +133,7 @@ def main ():
                     # Insert the project into the workspace.
                     workspace.insert (proj)
                     
-                    if not the_opts.ignore_depends:
+                    if not context.ignore_depends:
                         # Insert the project's dependencies into the workspace.
                         for depend in full_workspace.get_depends (proj.name ()):
                             if is_enabled (depend, True):
@@ -168,19 +143,21 @@ def main ():
             # Create a workspace from all projects.
             workspace = Workspace (projects)
 
+        # Now that the Workspace has been created, attach it to the Context
+        context.workspace = workspace
+
         # Make the prefix directory just in case it does not
         # exist at the moment.
-        if not os.path.exists (the_opts.prefix):
-            os.makedirs (the_opts.prefix)
+        if not os.path.exists (context.prefix):
+            os.makedirs (context.prefix)
 
         # Execute the command on the workspace.
         command = the_opts.cmd ()
-        command.init (the_opts)
-        command.execute (workspace, the_opts.prefix)
+        command.execute (context)
 
     except Exception as ex:
         logging.getLogger ().error (ex)
-        sys.exit (1)
+        raise
 
 #
 # Invoke the main entry point, if applicable.
