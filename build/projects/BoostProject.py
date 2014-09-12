@@ -51,7 +51,7 @@ class BoostProject (Project):
             url = 'git@github.com:boostorg/boost.git'
         tag = 'boost-1.56.0'
         abspath = path.abspath (path.join (ctx.prefix, self.__location__))
-        Git.checkout (url, abspath, branch=tag)
+        Git.checkout (url, abspath, tag=tag)
 
     #
     # Set the project's environment variables.
