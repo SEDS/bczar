@@ -166,7 +166,7 @@ class BoostProject (Project):
     def fix_iostreams (self, boost_root):
         jamfile = os.path.join (boost_root, 'libs', 'iostreams', 'build', 'Jamfile.v2')
         bad_lines = ['      [ ac.check-library /zlib//zlib : <library>/zlib//zlib\n',
-                     '        <source>zlib.cpp <source>gzip.cpp\n']
+                     '        <source>zlib.cpp <source>gzip.cpp ]\n']
 
         with open (jamfile, 'r') as source:
             lines = source.readlines ()
