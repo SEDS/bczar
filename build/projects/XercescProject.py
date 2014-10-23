@@ -92,6 +92,9 @@ class XercescProject (Project):
         abspath = os.path.abspath (os.path.join (prefix, self.__location__))
         os.environ['XERCESCROOT'] = abspath
 
+        from ..Utilities import append_libpath_variable
+        from ..Utilities import append_path_variable
+
         append_libpath_variable (os.path.join (abspath, 'lib'))
 
     #

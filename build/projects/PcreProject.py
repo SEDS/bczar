@@ -68,6 +68,9 @@ class PcreProject (Project):
         abspath = path.abspath (path.join (prefix, self.__location__))
         os.environ['PCRE_ROOT'] = abspath
 
+        from ..Utilities import append_libpath_variable
+        from ..Utilities import append_path_variable
+
         append_libpath_variable (path.join (abspath, 'lib'))
 
     #

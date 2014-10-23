@@ -62,6 +62,9 @@ class AdbcProject (Project):
     def set_env_variables (self, prefix):
         abspath = path.abspath (path.join (prefix, self.__location__))
         
+        from ..Utilities import append_libpath_variable
+        from ..Utilities import append_path_variable
+
         os.environ['ADBC_ROOT'] = path.join (abspath, 'ADBC')
         append_libpath_variable (path.join (abspath, 'ADBC', 'lib'))
 

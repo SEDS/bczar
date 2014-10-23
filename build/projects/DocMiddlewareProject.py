@@ -72,6 +72,9 @@ class DocMiddlewareProject (Project):
         os.environ['CIAO_ROOT'] = path.join (abspath, 'CIAO')
         os.environ['DANCE_ROOT'] = path.join (abspath, 'DAnCE')
 
+        from ..Utilities import append_libpath_variable
+        from ..Utilities import append_path_variable
+
         append_path_variable (path.join (abspath, 'ACE', 'bin'))
         append_path_variable (path.join (abspath, 'CIAO', 'bin'))
         append_path_variable (path.join (abspath, 'DAnCE', 'bin'))

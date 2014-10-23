@@ -120,6 +120,9 @@ class SQLiteProject (Project):
         abspath = path.abspath (path.join (prefix, self.__sqlite_basename__))
         os.environ['SQLITE_ROOT'] = abspath
 
+        from ..Utilities import append_libpath_variable
+        from ..Utilities import append_path_variable
+
         append_path_variable (path.join (abspath, 'bin'))
         append_libpath_variable (path.join (abspath, 'lib'))
 

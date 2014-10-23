@@ -101,12 +101,12 @@ class CutsProject (Project):
 
             def error_handler (func, path, exc_info):
                 import stat
-                if not os.access(path, os.W_OK):
+                if not os.access (path, os.W_OK):
                     # Is the error an access error ?
-                    os.chmod(path, stat.S_IWUSR)
-                    func(path)
+                    os.chmod (path, stat.S_IWUSR)
+                    func (path)
                 else:
-                    raise
+                    raise Exception (func, path, exc_info)
 
             # Delete the old directoy, then do a fresh checkout
             # of CUTS from the new location.
@@ -119,6 +119,9 @@ class CutsProject (Project):
     def set_env_variables (self, prefix):
         abspath = path.abspath (path.join (prefix, self.__location__))
         os.environ['CUTS_ROOT'] = abspath
+
+        from ..Utilities import append_libpath_variable
+        from ..Utilities import append_path_variable
 
         append_path_variable (path.join (abspath, 'bin'))
         append_libpath_variable (path.join (abspath, 'lib'))

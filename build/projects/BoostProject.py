@@ -65,6 +65,9 @@ class BoostProject (Project):
         if sys.platform == 'win32':
             os.environ['BOOST_VERSION'] = 'boost-1_56'
 
+        from ..Utilities import append_libpath_variable
+        from ..Utilities import append_path_variable
+
         append_libpath_variable (path.join (abspath, 'lib'))
 
     #
