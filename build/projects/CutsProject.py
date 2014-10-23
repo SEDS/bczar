@@ -11,10 +11,11 @@
 ################################################################################
 
 from ..Project import Project
-from ..scm import Subversion
+from ..scm import Git
 
 import os
 import sys
+import getopt
 
 from os import path
 import logging
@@ -53,17 +54,25 @@ class CutsProject (Project):
     # trunk in the SVN repo.
     #
     def download (self, ctx):
-        if ctx.use_trunk:
-            url = 'https://svn.cs.iupui.edu/repos/CUTS/trunk'
+        if ctx.use_https:
+            url = 'https://github.iu.edu/SEDS/CUTS.git'
         else:
-            url = Subversion.latest_version ('https://svn.cs.iupui.edu/repos/CUTS/tags',
-                                             'CUTS-',
-                                             '\d+\.\d+\.\d+',
-                                             'anonymous',
-                                             'anonymous')
+            url = 'git@github.iu.edu:SEDS/CUTS.git'
 
+        from ..scm import Git
         abspath = path.abspath (path.join (ctx.prefix, self.__location__))
-        Subversion.checkout (url, abspath, 'anonymous', 'anonymous')
+
+        try:
+            Git.checkout (url, abspath)
+        except getopt.error as ex:
+            logging.getLogger ().error ('Failed to download repo via IU Github, downloading from public Github')
+
+            if ctx.use_https:
+                url = 'https://github.com/SEDS/CUTS.git'
+            else:
+                url = 'git@github.com:SEDS/CUTS.git'
+
+            Git.checkout (url, abspath)
 
     #
     # Update the CUTS project to its latest controlled version.
