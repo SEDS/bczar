@@ -11,7 +11,6 @@ Uti#!/bin/env python
 ################################################################################
 
 from ..Project import Project
-from ..scm import Subversion
 from ..scm import Git
 
 import os
