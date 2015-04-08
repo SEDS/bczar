@@ -54,24 +54,22 @@ class CutsProject (Project):
     # trunk in the SVN repo.
     #
     def download (self, ctx):
-        if ctx.use_https:
-            url = 'https://github.iu.edu/SEDS/CUTS.git'
-        else:
-            url = 'git@github.iu.edu:SEDS/CUTS.git'
-
-        from ..scm import Git
         abspath = path.abspath (path.join (ctx.prefix, self.__location__))
 
-        try:
-            Git.checkout (url, abspath)
-        except getopt.error as ex:
-            logging.getLogger ().error ('Failed to download repo via IU Github, downloading from public Github')
+        from ..scm import Git
 
+        if ctx.affiliate:
             if ctx.use_https:
-                url = 'https://github.com/SEDS/CUTS.git'
+                url = 'https://github.iu.edu/SEDS/CUTS.git'
             else:
-                url = 'git@github.com:SEDS/CUTS.git'
+                url = 'git@github.iu.edu:SEDS/CUTS.git'
 
+            Git.checkout (url, abspath)
+        else:
+            if not ctx.use_https:
+                logging.getLogger ().warn ('Github only supports HTTPS checkouts.')
+
+            url = 'https://github.com/SEDS/CUTS.git'
             Git.checkout (url, abspath)
 
     #
