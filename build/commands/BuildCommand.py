@@ -42,6 +42,11 @@ class BuildContext (Context):
                                help = 'Clean the projects',
                                action = 'store_true')
 
+    build_parser.add_argument ('--threads', '-t',
+                               help = 'Number of threads to use when compiling',
+                               type = str,
+                               default = 1)
+
     build_parser.set_defaults (cmd = BuildCommand)
     build_parser.set_defaults (ctx = BuildContext)
 
@@ -49,6 +54,7 @@ class BuildContext (Context):
     Context.__init__ (self, args)
     self.versioned_namespace = args.versioned_namespace
     self.clean = args.clean
+    self.threads = args.threads
 
 #   
 # @class BuildCommand
@@ -92,7 +98,7 @@ class BuildCommand (Command):
     else:
       for proj in ctx.workspace.order_projects ():
           logging.getLogger ().info ('building {0}...'.format (proj.name ()))
-          proj.build (ctx.prefix, build_type, ctx.versioned_namespace)
+          proj.build (ctx, build_type)
       
 
 #

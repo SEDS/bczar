@@ -77,11 +77,11 @@ class Project:
     #
     # Build the project.
     #
-    # @param            prefix                  Location of the build
-    # @param            type                    The build type
-    # @param            versioned_namespace     Use versioned namespace
+    # @param            context         Context object containing various parameters for
+    #                                   managing the build
+    # @param            type            The build type
     #
-    def build (self, prefix, type, versioned_namespace):
+    def build (self, context, type):
         pass
 
     #
