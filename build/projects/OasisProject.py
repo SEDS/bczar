@@ -50,21 +50,21 @@ class OasisProject (Project):
     # archive, or a source code repository.
     #
     def download (self, ctx):
-        if ctx.use_https:
-            url = 'https://github.iu.edu/SEDS/OASIS.git'
-        else:
-            url = 'git@github.iu.edu:SEDS/OASIS.git'
         abspath = path.abspath (path.join (ctx.prefix, self.__location__))
 
-        try:
-          Git.checkout (url, abspath)
-        except getopt.error as ex:
-          logging.getLogger ().error ('Failed to download repo via IU Github, downloading from public Github')
-          if ctx.use_https:
-              url = 'https://github.com/SEDS/OASIS.git'
-          else:
-              url = 'ssh://git@github.com/hilljh82/OASIS.git'
-          Git.checkout (url, abspath)
+        if ctx.affiliate:
+            if ctx.use_https:
+                url = 'https://github.iu.edu/SEDS/OASIS.git'
+            else:
+                url = 'git@github.iu.edu:SEDS/OASIS.git'
+
+            Git.checkout (url, abspath)
+        else:
+            if not ctx.use_https:
+                logging.getLogger ().warn ('Github only supports HTTPS checkouts.')
+
+            url = 'https://github.com/SEDS/OASIS.git'
+            Git.checkout (url, abspath)
 
     # Set environment variables
     def set_env_variables (self, prefix):

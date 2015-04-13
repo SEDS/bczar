@@ -51,7 +51,7 @@ def checkout (url, location, username=None, password=None, branch=None, tag=None
   if tag:
     supported = supports_tag_checkout ()
 
-  cmd = ["git", "clone", "--quiet"]
+  cmd = ["git", "clone", "--recursive"]
   if branch:
     cmd.extend (['--branch', branch])
   elif tag and supported:

@@ -50,10 +50,10 @@ class XscProject (Project):
     # archive, or a source code repository.
     #
     def download (self, ctx):
-        if ctx.use_https:
-            logging.getLogger ().warn ('XSC does not support HTTPS checkouts.  Using git://')
+        if not ctx.use_https:
+            logging.getLogger ().warn ('Github only supports HTTPS checkouts.')
 
-        url = 'git://git.dre.vanderbilt.edu/xsc/xsc.git'
+        url = 'https://github.com/DOCGroup/XSC.git'
         abspath = path.abspath (path.join (ctx.prefix, self.__location__))
         
         from ..scm import Git

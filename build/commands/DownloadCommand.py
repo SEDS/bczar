@@ -33,6 +33,10 @@ class DownloadContext (Context):
                                          help = 'Download source files for all projects in the workspace',
                                          description = 'Download source files for all projects in the workspace')
 
+    download_parser.add_argument ('--affiliate',
+                                  help = 'Use the private IU github, which requires affiliate access',
+                                  action = 'store_true')
+
     download_parser.add_argument ('--use-trunk',
                                   help = 'Use the trunk version for projects instead of stable',
                                   action = 'store_true')
@@ -48,6 +52,7 @@ class DownloadContext (Context):
     Context.__init__ (self, args)
     self.use_trunk = args.use_trunk
     self.use_https = args.use_https
+    self.affiliate = args.affiliate
 
 #   
 # @class DownloadCommand
