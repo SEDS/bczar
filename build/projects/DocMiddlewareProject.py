@@ -132,9 +132,11 @@ class DocMiddlewareProject (Project):
     #
     def build (self, prefix, type, versioned_namespace):
         import sys
+        import platform
         from string import Template
 
         ACE_ROOT = os.environ['ACE_ROOT']
+        config_prefix = ''
 
         # We need to define the platform_macros.GNU script if we are not
         # running on a Windows environment.
@@ -173,6 +175,9 @@ class DocMiddlewareProject (Project):
           elif sys.platform in ['linux2', 'linux']:
             platform_macros = 'platform_linux.GNU'
             config_file = 'config-linux.h'
+            # If we are building on an ARM, make an extra definition in config.h
+            if platform.machine ().startswith ('arm'):
+              config_prefix = '#define ACE_GCC_HAS_TEMPLATE_INSTANTIATION_VISIBILITY_ATTRS 1'
 
             # Create a symbolic link to the target platform macros.
           source = path.join (ACE_ROOT, 'include/makeinclude/', platform_macros)
@@ -195,12 +200,14 @@ class DocMiddlewareProject (Project):
 #ifndef _ACE_CONFIG_H_
 #define _ACE_CONFIG_H_
 
+${config_prefix}
 #include "ace/${config_file}"
 
 #endif  // !defined _ACE_CONFIG_H_
 """)
 
-            params = { 'config_file' : config_file }
+            params = { 'config_file' : config_file,
+                       'config_prefix' : config_prefix }
 
             logging.getLogger ().info ('creating default ace/config.h file')
             config = open (filename, 'w')
