@@ -45,7 +45,7 @@ class BuildContext (Context):
     build_parser.add_argument ('--threads', '-t',
                                help = 'Number of threads to use when compiling',
                                type = str,
-                               default = 1)
+                               default = '1')
 
     build_parser.set_defaults (cmd = BuildCommand)
     build_parser.set_defaults (ctx = BuildContext)
