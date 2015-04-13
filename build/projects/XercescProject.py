@@ -128,7 +128,7 @@ class XercescProject (Project):
     #
     # Build the project
     #
-    def build (self, prefix, type, versioned_namespace):
+    def build (self, ctx, type):
         import subprocess
         
         XERCESCROOT = os.environ['XERCESCROOT']
@@ -199,7 +199,7 @@ class XercescProject (Project):
             cmd = ['./configure', '--prefix=' + XERCESCROOT]
             subprocess.check_call (cmd, cwd = XERCESCROOT)
 
-            cmd = ['make', 'install']
+            cmd = ['make', '-j', ctx.threads, 'install']
             subprocess.check_call (cmd, cwd = XERCESCROOT)
 
     #

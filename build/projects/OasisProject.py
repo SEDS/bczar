@@ -108,7 +108,7 @@ class OasisProject (Project):
     #
     # Build the XSC project.
     #
-    def build (self, prefix, type, versioned_namespace):
+    def build (self, ctx, type):
         OASIS_ROOT = os.environ['OASIS_ROOT']
         workspace = path.join (OASIS_ROOT, 'OASIS.mwc')
 
@@ -126,7 +126,7 @@ class OasisProject (Project):
         else:
             features += ',openssl=0'
 
-        if versioned_namespace:
+        if ctx.versioned_namespace:
             features += ',versioned_namespace=1'
 
         from ..MpcWorkspace import MpcWorkspace
@@ -134,7 +134,7 @@ class OasisProject (Project):
         
         mwc.generate_default_feature_file (feature_file)
         mwc.generate ()
-        mwc.build ()
+        mwc.build (ctx.threads)
 
     #
     # Build the XSC project.

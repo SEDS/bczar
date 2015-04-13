@@ -101,15 +101,15 @@ class AdbcProject (Project):
     #
     # Build the project
     #
-    def build (self, prefix, build_type, versioned_namespace):
-        mwc = self.get_mwc_workspace (prefix, build_type, versioned_namespace)
+    def build (self, ctx, build_type):
+        mwc = self.get_mwc_workspace (ctx.prefix, build_type, ctx.versioned_namespace)
         
         ADBC_ROOT = self.get_ADBC_ROOT ()
         feature_file = path.join (ADBC_ROOT, 'default.features')
         mwc.generate_default_feature_file (feature_file)
         
         mwc.generate ()
-        mwc.build ()
+        mwc.build (ctx.threads)
 
     #
     # Clean the project

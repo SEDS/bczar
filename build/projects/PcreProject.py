@@ -103,7 +103,7 @@ class PcreProject (Project):
     #
     # Build the project
     #
-    def build (self, prefix, type, versioned_namespace):
+    def build (self, ctx, type):
         import subprocess
         from os.path import join, splitext
         from string import Template
@@ -178,7 +178,7 @@ class PcreProject (Project):
                         'pcre_printint.c',
                         'pcre_ucp_searchfuncs.c']
 
-            filenames = os.listdir (path.join (prefix, self.__location__))
+            filenames = os.listdir (path.join (ctx.prefix, self.__location__))
             for filename in filenames:
                 if filename.startswith ('pcre_') and filename.endswith ('.c') and not filename in excludes:
                     source_files.append (filename)
@@ -232,7 +232,7 @@ workspace (pcre) {
             mwc = MpcWorkspace (workspace_filename, type, None, True)
             
             mwc.generate ()
-            mwc.build ('Release')
+            mwc.build (ctx.threads, 'Release')
 
             # 5. Install the project.
             pcre_include = join (PCRE_ROOT, 'include')
@@ -273,7 +273,7 @@ workspace (pcre) {
             subprocess.check_call (cmd, cwd = PCRE_ROOT)
 
             # Finally, we can build PCRE
-            cmd = ['make', 'install']
+            cmd = ['make', '-j', ctx.threads, 'install']
             subprocess.check_call (cmd, cwd = PCRE_ROOT)
 
     #

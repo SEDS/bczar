@@ -166,15 +166,15 @@ class CutsProject (Project):
     #
     # Build the project
     #
-    def build (self, prefix, build_type, versioned_namespace):
+    def build (self, ctx, build_type):
         CUTS_ROOT = self.get_CUTS_ROOT ()        
         feature_file = path.join (CUTS_ROOT, 'default.features')
         
-        mwc = self.get_mwc_workspace (prefix, build_type, versioned_namespace)
+        mwc = self.get_mwc_workspace (ctx.prefix, build_type, ctx.versioned_namespace)
         mwc.generate_default_feature_file (feature_file)
 
         mwc.generate ()
-        mwc.build ()
+        mwc.build (ctx.threads)
 
     #
     # Clean the project
