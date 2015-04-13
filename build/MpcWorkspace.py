@@ -65,7 +65,7 @@ class MpcWorkspace:
     #
     # Build the workspace.
     #
-    def build (self, config = 'Debug'):
+    def build (self, threads, config = 'Debug'):
         # Construct the correct build command based on the build type
         if self._type_.find ('vc') == 0:
             # Set the executable command.
@@ -78,11 +78,11 @@ class MpcWorkspace:
             # Set the executable command.
             if self._type_ == 'gnuace':
                 if sys.platform == 'darwin':
-                    cmd = ['make']
+                    cmd = ['make', '-j', threads]
                 else:
-                    cmd = ['gmake']
+                    cmd = ['gmake', '-j', threads]
             else:
-                cmd = [self._type_]
+                cmd = [self._type_, '-j', threads]
 
             if self._features_ is not None:
                 # Append the macros to the command-line
