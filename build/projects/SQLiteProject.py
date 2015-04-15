@@ -157,7 +157,7 @@ class SQLiteProject (Project):
     #
     # Build the project
     #
-    def build (self, ctx, type):
+    def build (self, ctx):
         SQLITE_ROOT = os.environ['SQLITE_ROOT']
 
         if sys.platform == 'win32':
@@ -176,7 +176,7 @@ class SQLiteProject (Project):
     #
     # Build the project
     #
-    def clean (self, prefix, type, versioned_namespace):
+    def clean (self, ctx):
         SQLITE_ROOT = os.environ['SQLITE_ROOT']
 
         if sys.platform == 'win32':
