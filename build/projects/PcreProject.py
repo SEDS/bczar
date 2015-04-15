@@ -103,7 +103,7 @@ class PcreProject (Project):
     #
     # Build the project
     #
-    def build (self, ctx, type):
+    def build (self, ctx):
         import subprocess
         from os.path import join, splitext
         from string import Template
@@ -228,11 +228,12 @@ workspace (pcre) {
             workspace_file.close ()
             
             # 4. Build the project.
-            from ..MpcWorkspace import MpcWorkspace
-            mwc = MpcWorkspace (workspace_filename, type, None, True)
+            from ..MpcWorkspace import MpcContext, MpcWorkspace
+            mpc_ctx = MpcContext (workspace, ctx.build_type, 'Release', ctx.threads, None, True)
+            mwc =  MpcWorkspace (mpc_ctx)
             
             mwc.generate ()
-            mwc.build (ctx.threads, 'Release')
+            mwc.build ()
 
             # 5. Install the project.
             pcre_include = join (PCRE_ROOT, 'include')
