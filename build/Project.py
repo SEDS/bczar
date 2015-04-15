@@ -79,15 +79,14 @@ class Project:
     #
     # @param            context         Context object containing various parameters for
     #                                   managing the build
-    # @param            type            The build type
     #
-    def build (self, context, type):
+    def build (self, context):
         pass
 
     #
     # Clean the project.
     #
-    def clean (self, prefix, type, versioned_namespace):
+    def clean (self, context):
         pass
         
     #
