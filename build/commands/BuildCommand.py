@@ -47,6 +47,11 @@ class BuildContext (Context):
                                type = str,
                                default = '1')
 
+    build_parser.add_argument ('--config', '-c',
+                               help = 'Configuration to use to build the project (i.e. Debug, Release, etc).',
+                               type = str,
+                               default = 'Debug')
+
     build_parser.set_defaults (cmd = BuildCommand)
     build_parser.set_defaults (ctx = BuildContext)
 
@@ -55,6 +60,7 @@ class BuildContext (Context):
     self.versioned_namespace = args.versioned_namespace
     self.clean = args.clean
     self.threads = args.threads
+    self.config = args.config
 
 #   
 # @class BuildCommand
@@ -80,7 +86,7 @@ class BuildCommand (Command):
     
     # Auto-detect the build type.
     from ..Utilities import autodetect_build_type
-    build_type = autodetect_build_type ()
+    ctx.build_type = autodetect_build_type ()
 
     # Validate build environment
     logging.getLogger ().info ('validating build environment')
@@ -94,11 +100,11 @@ class BuildCommand (Command):
     if (ctx.clean):
       for proj in ctx.workspace.order_projects ():
           logging.getLogger ().info ('cleaning {0}...'.format (proj.name ()))
-          proj.clean (ctx.prefix, build_type, ctx.versioned_namespace)
+          proj.clean (ctx)
     else:
       for proj in ctx.workspace.order_projects ():
           logging.getLogger ().info ('building {0}...'.format (proj.name ()))
-          proj.build (ctx, build_type)
+          proj.build (ctx)
       
 
 #
