@@ -154,7 +154,7 @@ class BoostProject (Project):
                    '--without-python',
                    '--without-math',
                    '--without-signals',
-                   '--toolset=' + toolsets[ctx.type],
+                   '--toolset=' + toolsets[ctx.build_type],
                    '--abbreviate-paths',
                    '-j' + ctx.threads,
                    'install']
