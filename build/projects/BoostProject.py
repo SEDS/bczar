@@ -118,7 +118,7 @@ class BoostProject (Project):
     #
     # Build the project
     #
-    def build (self, ctx, type):
+    def build (self, ctx):
         import subprocess
 
         BOOST_ROOT = os.environ['BOOST_ROOT']
@@ -154,7 +154,7 @@ class BoostProject (Project):
                    '--without-python',
                    '--without-math',
                    '--without-signals',
-                   '--toolset=' + toolsets[type],
+                   '--toolset=' + toolsets[ctx.type],
                    '--abbreviate-paths',
                    '-j' + ctx.threads,
                    'install']
