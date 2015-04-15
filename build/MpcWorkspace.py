@@ -18,6 +18,24 @@ import sys
 import logging
 
 #
+# @class MpcContext
+#
+# Context to hold any state/options for doing
+# a build using MpcWorkspace
+#
+class MpcContext:
+  #
+  # Initalizing constructor
+  #
+  def __init__ (self, workspace, type, config, threads, features = None, use_ace = False):
+    self.workspace = workspace
+    self.type = type
+    self.config = config
+    self.threads = threads
+    self.features = features
+    self.use_ace = use_ace
+
+#
 # @class MpcWorkspace
 #
 # Wrapper class for using MPC.
@@ -26,12 +44,13 @@ class MpcWorkspace:
     #
     # Initializing constructor
     #
-    # @param[in]          use_ace       Use mwc.pl in $ACE_ROOT/bin
-    def __init__ (self, workspace, type, features = None, use_ace = False):
-        self._workspace_ = workspace
-        self._type_ = type
-        self._features_ = features
-        self._use_ace_ = use_ace
+    def __init__ (self, ctx):
+        self._workspace_ = ctx.workspace
+        self._type_ = ctx.type
+        self._config_ = ctx.config
+        self._threads_ = ctx.threads
+        self._features_ = ctx.features
+        self._use_ace_ = ctx.use_ace
 
     #
     # Generate a MPC workspace for a build tool.
@@ -65,24 +84,24 @@ class MpcWorkspace:
     #
     # Build the workspace.
     #
-    def build (self, threads, config = 'Debug'):
+    def build (self):
         # Construct the correct build command based on the build type
         if self._type_.find ('vc') == 0:
             # Set the executable command.
             solution = self._workspace_.replace ('.mwc', '.sln')
 
             from .Utilities import get_vc_executable
-            cmd = [get_vc_executable (), solution, '/useenv', '/Build', config]
+            cmd = [get_vc_executable (), solution, '/useenv', '/Build', self._config_]
 
         elif self._type_ in ('gnuace', 'nmake', 'make'):
             # Set the executable command.
             if self._type_ == 'gnuace':
                 if sys.platform == 'darwin':
-                    cmd = ['make', '-j', threads]
+                    cmd = ['make', '-j', self._threads_]
                 else:
-                    cmd = ['gmake', '-j', threads]
+                    cmd = ['gmake', '-j', self._threads_]
             else:
-                cmd = [self._type_, '-j', threads]
+                cmd = [self._type_, '-j', self._threads_]
 
             if self._features_ is not None:
                 # Append the macros to the command-line
