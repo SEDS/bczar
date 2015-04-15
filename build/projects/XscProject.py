@@ -102,7 +102,7 @@ class XscProject (Project):
     #
     # Build the XSC project.
     #
-    def build (self, ctx, type):
+    def build (self, ctx):
         XSC_ROOT = os.environ['XSC_ROOT']
         workspace = path.join (XSC_ROOT, 'XSC.mwc')
 
@@ -112,25 +112,28 @@ class XscProject (Project):
         if ctx.versioned_namespace:
             features += ',versioned_namespace=1'
 
-        from ..MpcWorkspace import MpcWorkspace
-        mwc = MpcWorkspace (workspace, type, features, True)
+        from ..MpcWorkspace import MpcContext, MpcWorkspace
+        mpc_ctx = MpcContext (workspace, ctx.build_type, ctx.config, ctx.threads, features, True)
+        mwc = MpcWorkspace (mpc_ctx)
 
         mwc.generate ()
-        mwc.build (ctx.threads)
+        mwc.build ()
 
     #
     # Build the XSC project.
     #
-    def clean (self, prefix, type, versioned_namespace):
+    def clean (self, ctx):
         XSC_ROOT = os.environ['XSC_ROOT']
         workspace = path.join (XSC_ROOT, 'XSC.mwc')
 
         # Generate the workspace
         features = 'xerces3=1,boost=1,exceptions=1'
 
-        if versioned_namespace:
+        if ctx.versioned_namespace:
             features += ',versioned_namespace=1'
 
-        from ..MpcWorkspace import MpcWorkspace
-        mwc = MpcWorkspace (workspace, type, features, True)
+        from ..MpcWorkspace import MpcContext, MpcWorkspace
+        mpc_ctx = MpcContext (workspace, ctx.build_type, ctx.config, ctx.threads, features, True)
+        mwc = MpcWorkspace (mpc_ctx)
+
         mwc.clean ()
