@@ -166,28 +166,28 @@ class CutsProject (Project):
     #
     # Build the project
     #
-    def build (self, ctx, build_type):
+    def build (self, ctx):
         CUTS_ROOT = self.get_CUTS_ROOT ()        
         feature_file = path.join (CUTS_ROOT, 'default.features')
         
-        mwc = self.get_mwc_workspace (ctx.prefix, build_type, ctx.versioned_namespace)
+        mwc = self.get_mwc_workspace (ctx)
         mwc.generate_default_feature_file (feature_file)
 
         mwc.generate ()
-        mwc.build (ctx.threads)
+        mwc.build ()
 
     #
     # Clean the project
     #
-    def clean (self, prefix, build_type, versioned_namespace):
+    def clean (self, ctx):
         # We are assuming the workspace is already generated
-        mwc = self.get_mwc_workspace (prefix, build_type, versioned_namespace)
+        mwc = self.get_mwc_workspace (ctx)
         mwc.clean ()
         
     #
     # Get the MWC workspace file
     #
-    def get_mwc_workspace (self, prefix, build_type, versioned_namespace):
+    def get_mwc_workspace (self, ctx):
         CUTS_ROOT = self.get_CUTS_ROOT ()
         workspace = path.join (CUTS_ROOT, 'CUTS.mwc')
 
@@ -196,7 +196,7 @@ class CutsProject (Project):
         else:
             features = 'runtime=1,boost=1,xerces3=1,ccm=1,tcpip=1,sqlite3=1,pcre=1,mpi=0,xsc=1'
 
-        if versioned_namespace:
+        if ctx.versioned_namespace:
             logging.getLogger ().info ('building with versioned namespace support')
             features += ',versioned_namespace=1'
 
@@ -234,8 +234,10 @@ class CutsProject (Project):
             features += ',coredx=0'
 
         # Generate the workspace
-        from ..MpcWorkspace import MpcWorkspace
-        return MpcWorkspace (workspace, build_type, features, True)
+
+        from ..MpcWorkspace import MpcContext, MpcWorkspace
+        mpc_ctx = MpcContext (workspace, ctx.build_type, ctx.config, ctx.threads, features, True)
+        return MpcWorkspace (mpc_ctx)
 
     def get_CUTS_ROOT (self):
         return os.environ['CUTS_ROOT']
