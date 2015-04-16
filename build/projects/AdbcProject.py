@@ -101,8 +101,8 @@ class AdbcProject (Project):
     #
     # Build the project
     #
-    def build (self, prefix, build_type, versioned_namespace):
-        mwc = self.get_mwc_workspace (prefix, build_type, versioned_namespace)
+    def build (self, ctx):
+        mwc = self.get_mwc_workspace (ctx)
         
         ADBC_ROOT = self.get_ADBC_ROOT ()
         feature_file = path.join (ADBC_ROOT, 'default.features')
@@ -114,26 +114,27 @@ class AdbcProject (Project):
     #
     # Clean the project
     #
-    def clean (self, prefix, build_type, versioned_namespace):
+    def clean (self, ctx):
         # We are assuming the workspace is already generated
-        mwc = self.get_mwc_workspace (prefix, build_type, versioned_namespace)
+        mwc = self.get_mwc_workspace (ctx)
         mwc.clean ()
     
     #
     # Get the MWC workspace file
     #
-    def get_mwc_workspace (self, prefix, build_type, versioned_namespace) :
+    def get_mwc_workspace (self, ctx):
         # Now, we are goig to build ADBC
         ADBC_ROOT = self.get_ADBC_ROOT ()
         workspace = path.join (ADBC_ROOT, 'ADBC.mwc')
         
         features = 'sqlite3=1'
 
-        if versioned_namespace:
+        if ctx.versioned_namespace:
             features += ',versioned_namespace=1'
 
-        from ..MpcWorkspace import MpcWorkspace
-        return MpcWorkspace (workspace, build_type, features, True)
+        from ..MpcWorkspace import MpcContext, MpcWorkspace
+        mpc_ctx = MpcContext (workspace, ctx.build_type, ctx.config, ctx.threads, features, True)
+        return MpcWorkspace (mpc_ctx)
 
     def get_ADBC_ROOT (self):
         return os.environ['ADBC_ROOT']

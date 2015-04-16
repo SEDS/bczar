@@ -157,7 +157,7 @@ class SQLiteProject (Project):
     #
     # Build the project
     #
-    def build (self, prefix, type, versioned_namespace):
+    def build (self, ctx):
         SQLITE_ROOT = os.environ['SQLITE_ROOT']
 
         if sys.platform == 'win32':
@@ -169,14 +169,14 @@ class SQLiteProject (Project):
           __ap__.wait ()
 
           # We can now build SQLite.
-          cmd = ['make', 'install']
+          cmd = ['make', '-j', ctx.threads, 'install']
           __ap__ = subprocess.Popen (cmd, cwd = SQLITE_ROOT)
           __ap__.wait ()
 
     #
     # Build the project
     #
-    def clean (self, prefix, type, versioned_namespace):
+    def clean (self, ctx):
         SQLITE_ROOT = os.environ['SQLITE_ROOT']
 
         if sys.platform == 'win32':

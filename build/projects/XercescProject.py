@@ -128,7 +128,7 @@ class XercescProject (Project):
     #
     # Build the project
     #
-    def build (self, prefix, type, versioned_namespace):
+    def build (self, ctx):
         import subprocess
         
         XERCESCROOT = os.environ['XERCESCROOT']
@@ -139,7 +139,7 @@ class XercescProject (Project):
         if platform == 'win32':
             import shutil
 
-            sln = 'projects/Win32/%s/xerces-all/xerces-all.sln' % type.upper ()
+            sln = 'projects/Win32/%s/xerces-all/xerces-all.sln' % ctx.build_type.upper ()
             configs = ['Debug|Win32',
                        'Release|Win32',
                        'Static Debug|Win32',
@@ -159,7 +159,7 @@ class XercescProject (Project):
 
                 # Copy all output files to the library path.
                 tmp = config.split ('|')
-                build = 'Build/%s/%s/%s' % (tmp[1], type.upper (), tmp[0])
+                build = 'Build/%s/%s/%s' % (tmp[1], ctx.build_type.upper (), tmp[0])
                 outdir = os.path.join (XERCESCROOT, build)
 
                 for file in os.listdir (outdir):
@@ -199,13 +199,13 @@ class XercescProject (Project):
             cmd = ['./configure', '--prefix=' + XERCESCROOT]
             subprocess.check_call (cmd, cwd = XERCESCROOT)
 
-            cmd = ['make', 'install']
+            cmd = ['make', '-j', ctx.threads, 'install']
             subprocess.check_call (cmd, cwd = XERCESCROOT)
 
     #
     # Build the project
     #
-    def clean (self, prefix, type, versioned_namespace):
+    def clean (self, ctx):
         import subprocess
         
         XERCESCROOT = os.environ['XERCESCROOT']
@@ -216,7 +216,7 @@ class XercescProject (Project):
         if platform == 'win32':
             import shutil
 
-            sln = 'projects/Win32/%s/xerces-all/xerces-all.sln' % type.upper ()
+            sln = 'projects/Win32/%s/xerces-all/xerces-all.sln' % ctx.build_type.upper ()
             configs = ['Debug|Win32',
                        'Release|Win32',
                        'Static Debug|Win32',

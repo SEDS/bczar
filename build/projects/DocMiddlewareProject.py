@@ -130,7 +130,7 @@ class DocMiddlewareProject (Project):
     #
     # Build the project
     #
-    def build (self, prefix, type, versioned_namespace):
+    def build (self, ctx):
         import sys
         import platform
         from string import Template
@@ -225,18 +225,19 @@ ${config_prefix}
             config.close ()
 
         # First, we are going to build ACE + TAO + CIAO + DAnCE
-        CIAO_ROOT = path.abspath (path.join (prefix, self.__location__, 'CIAO'))
+        CIAO_ROOT = path.abspath (path.join (ctx.prefix, self.__location__, 'CIAO'))
         os.environ['CIAO_ROOT'] = CIAO_ROOT
 
         workspace = path.join (CIAO_ROOT, 'CIAO_TAO_DAnCE.mwc')
 
         features = "xerces3=1,boost=1"
 
-        if versioned_namespace:
+        if ctx.versioned_namespace:
             features += ',versioned_namespace=1'
 
-        from ..MpcWorkspace import MpcWorkspace
-        mwc =  MpcWorkspace (workspace, type, features, True)
+        from ..MpcWorkspace import MpcContext, MpcWorkspace
+        mpc_ctx = MpcContext (workspace, ctx.build_type, ctx.config, ctx.threads, features, True)
+        mwc =  MpcWorkspace (mpc_ctx)
 
         mwc.generate ()
         mwc.build ()
@@ -244,21 +245,22 @@ ${config_prefix}
     #
     # Build the project
     #
-    def clean (self, prefix, type, versioned_namespace):
+    def clean (self, ctx):
         import sys
         from string import Template
 
         # First, we are going to build ACE + TAO + CIAO + DAnCE
-        CIAO_ROOT = path.abspath (path.join (prefix, self.__location__, 'CIAO'))
+        CIAO_ROOT = path.abspath (path.join (ctx.prefix, self.__location__, 'CIAO'))
         os.environ['CIAO_ROOT'] = CIAO_ROOT
 
         workspace = path.join (CIAO_ROOT, 'CIAO_TAO_DAnCE.mwc')
 
         features = "xerces3=1,boost=1"
 
-        if versioned_namespace:
+        if ctx.versioned_namespace:
             features += ',versioned_namespace=1'
 
-        from ..MpcWorkspace import MpcWorkspace
-        mwc =  MpcWorkspace (workspace, type, features, True)
+        from ..MpcWorkspace import MpcContext, MpcWorkspace
+        mpc_ctx = MpcContext (workspace, ctx.build_type, ctx.config, ctx.threads, features, True)
+        mwc = MpcWorkspace (mpc_ctx)
         mwc.clean ()

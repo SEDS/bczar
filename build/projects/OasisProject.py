@@ -108,7 +108,7 @@ class OasisProject (Project):
     #
     # Build the XSC project.
     #
-    def build (self, prefix, type, versioned_namespace):
+    def build (self, ctx):
         OASIS_ROOT = os.environ['OASIS_ROOT']
         workspace = path.join (OASIS_ROOT, 'OASIS.mwc')
 
@@ -126,12 +126,13 @@ class OasisProject (Project):
         else:
             features += ',openssl=0'
 
-        if versioned_namespace:
+        if ctx.versioned_namespace:
             features += ',versioned_namespace=1'
 
-        from ..MpcWorkspace import MpcWorkspace
-        mwc = MpcWorkspace (workspace, type, features, True)
-        
+        from ..MpcWorkspace import MpcContext, MpcWorkspace
+        mpc_ctx = MpcContext (workspace, ctx.build_type, ctx.config, ctx.threads, features, True)
+        mwc = MpcWorkspace (mpc_ctx)
+
         mwc.generate_default_feature_file (feature_file)
         mwc.generate ()
         mwc.build ()
@@ -139,7 +140,7 @@ class OasisProject (Project):
     #
     # Build the XSC project.
     #
-    def clean (self, prefix, type, versioned_namespace):
+    def clean (self, ctx):
         OASIS_ROOT = os.environ['OASIS_ROOT']
         workspace = path.join (OASIS_ROOT, 'OASIS.mwc')
 
@@ -161,10 +162,12 @@ class OasisProject (Project):
         else:
             features += ',pintool=0'
 
-        if versioned_namespace:
+        if ctx.versioned_namespace:
             features += ',versioned_namespace=1'
 
-        from ..MpcWorkspace import MpcWorkspace
-        mwc = MpcWorkspace (workspace, type, features, True)
+        from ..MpcWorkspace import MpcContext, MpcWorkspace
+        mpc_ctx = MpcContext (workspace, ctx.build_type, ctx.config, ctx.threads, features, True)
+        mwc = MpcWorkspace (mpc_ctx)
+
         mwc.clean ()
 

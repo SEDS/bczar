@@ -118,7 +118,7 @@ class BoostProject (Project):
     #
     # Build the project
     #
-    def build (self, prefix, type, versioned_namespace):
+    def build (self, ctx):
         import subprocess
 
         BOOST_ROOT = os.environ['BOOST_ROOT']
@@ -154,12 +154,13 @@ class BoostProject (Project):
                    '--without-python',
                    '--without-math',
                    '--without-signals',
-                   '--toolset=' + toolsets[type],
+                   '--toolset=' + toolsets[ctx.build_type],
                    '--abbreviate-paths',
+                   '-j' + ctx.threads,
                    'install']
 
         else:
-          cmd = [bjam, prefix_arg, '--without-python', 'install', '-sNO_COMPRESSION=1']
+          cmd = [bjam, prefix_arg, '--without-python', '-j' + ctx.threads, 'install', '-sNO_COMPRESSION=1']
 
         subprocess.check_call (cmd, cwd = BOOST_ROOT)
 
