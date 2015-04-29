@@ -214,10 +214,10 @@ project (pcre) {
             project_file = open (project_filename, 'w')
             project_file.write (project)
             project_file.close ()
-            
+
             # Write the workspace file for the project.
             workspace = """// -*- MWC -*-
-            
+
 workspace (pcre) {
   pcre.mpc
 }
@@ -226,12 +226,12 @@ workspace (pcre) {
             workspace_file = open (workspace_filename, 'w')
             workspace_file.write (workspace)
             workspace_file.close ()
-            
+
             # 4. Build the project.
             from ..MpcWorkspace import MpcContext, MpcWorkspace
-            mpc_ctx = MpcContext (workspace, ctx.build_type, 'Release', ctx.threads, None, True)
+            mpc_ctx = MpcContext (workspace_filename, ctx.build_type, 'Release', ctx.threads, None, True)
             mwc =  MpcWorkspace (mpc_ctx)
-            
+
             mwc.generate ()
             mwc.build ()
 
@@ -239,10 +239,10 @@ workspace (pcre) {
             pcre_include = join (PCRE_ROOT, 'include')
             if path.exists (pcre_include):
                 shutil.rmtree (pcre_include)
-                
+
             def copytree_includes (root, files):
                 logging.getLogger ().info ('copying files in %s' % root)
-                
+
                 exts = ['.h']
 
                 ignore = [name for name in files
@@ -254,17 +254,17 @@ workspace (pcre) {
                              pcre_include,
                              False,
                              copytree_includes)
-            
+
             # 6. Rename the import library.
             libpcre_lib = join (PCRE_ROOT, 'lib', 'libpcre.lib')
             pcre_lib = join (PCRE_ROOT, 'lib', 'pcre.lib')
             shutil.move (libpcre_lib, pcre_lib)
-            
+
         else:
             # First, we need to fix any SDO linkage problems.
             self.fix_SDO_linkage (PCRE_ROOT)
 
-            # We can then proceed with running automake to generate 
+            # We can then proceed with running automake to generate
             # the ./configure script.
             cmd = ['./autogen.sh']
             subprocess.check_call (cmd, cwd = PCRE_ROOT)

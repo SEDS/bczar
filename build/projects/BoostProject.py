@@ -164,6 +164,15 @@ class BoostProject (Project):
 
         subprocess.check_call (cmd, cwd = BOOST_ROOT)
 
+        # Run b2 headers to ensure all headers get copied to the correct location
+        if sys.platform == 'win32':
+          b2 = path.join (BOOST_ROOT, 'b2')
+          cmd = [b2,
+                 prefix_arg,
+                 'headers']
+
+          subprocess.check_call (cmd, cwd=BOOST_ROOT)
+
     #
     # Fix iostreams jamfile for linux builds
     #
