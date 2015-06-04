@@ -11,6 +11,7 @@
 ################################################################################
 
 from ..Project import Project
+from ..scm import Git
 
 import os
 from os import path
@@ -50,14 +51,21 @@ class XscProject (Project):
     # archive, or a source code repository.
     #
     def download (self, ctx):
-        if not ctx.use_https:
-            logging.getLogger ().warn ('Github only supports HTTPS checkouts.')
-
-        url = 'https://github.com/DOCGroup/XSC.git'
         abspath = path.abspath (path.join (ctx.prefix, self.__location__))
-        
-        from ..scm import Git
-        Git.checkout (url, abspath)
+
+        if ctx.affiliate:
+            if ctx.use_https:
+                url = 'https://github.iu.edu/SEDS/XSC.git'
+            else:
+                url = 'git@github.iu.edu:SEDS/XSC.git'
+
+            Git.checkout (url, abspath)
+        else:
+            if not ctx.use_https:
+                logging.getLogger ().warn ('Github only supports HTTPS checkouts.')
+
+            url = 'https://github.com/SEDS/XSC.git'
+            Git.checkout (url, abspath)
 
     #
     # Set the project's environment variables.
