@@ -126,6 +126,7 @@ class CutsProject (Project):
     def set_env_variables (self, prefix):
         abspath = path.abspath (path.join (prefix, self.__location__))
         os.environ['CUTS_ROOT'] = abspath
+        os.environ['CCF_ROOT'] = path.join (abspath, 'contrib', 'CCF', 'CCF')
 
         from ..Utilities import append_libpath_variable
         from ..Utilities import append_path_variable
@@ -158,6 +159,7 @@ class CutsProject (Project):
 
             script.begin_section ('CUTS')
             script.write_env_variable ('CUTS_ROOT', location)
+            script.write_env_variable ('CCF_ROOT', os.path.join (location, 'contrib', 'CCF', 'CCF'))
             script.append_path_variable (path.join (location, 'bin'))
             script.append_libpath_variable (path.join (location, 'lib'))
 
