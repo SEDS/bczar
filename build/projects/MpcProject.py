@@ -11,7 +11,7 @@
 ################################################################################
 
 from ..Project import Project
-from ..scm import Subversion
+from ..scm import Git
 
 import os
 from os import path
@@ -24,73 +24,74 @@ import logging
 #
 def __create__ ():
     return MpcProject ()
-    
+
 #
 # @class MpcProject
 #
 # Implementation of the Project object for MPC.
 #
 class MpcProject (Project):
-    __location__ = 'MPC'
-    
-    #
-    # Default constuctor.
-    #
-    def __init__ (self):
-        Project.__init__ (self, 'MPC')
+	__location__ = 'MPC'
 
-    #
-    # Downlaod the project's source files. The download can be from an online
-    # archive, or a source code repository.
-    #
-    def download (self, ctx):
-        if ctx.use_trunk:
-            url = 'https://svn.dre.vanderbilt.edu/DOC/MPC/trunk'
-        else:
-            url = 'https://svn.dre.vanderbilt.edu/DOC/MPC/tags/ACE+TAO+CIAO-6_1_8'
-            
-        abspath = path.abspath (path.join (ctx.prefix, self.__location__))
-        Subversion.checkout (url, abspath, 'anonymous', 'anonymous')
-        
-    #
-    # Set the project's environment variables.
-    #
-    def set_env_variables (self, prefix):
-        abspath = path.abspath (path.join (prefix, self.__location__))
-        os.environ['MPC_ROOT'] = abspath
+	#
+	# Default constuctor.
+	#
+	def __init__ (self):
+		Project.__init__ (self, 'MPC')
 
-        from ..Utilities import append_libpath_variable
-        from ..Utilities import append_path_variable
+	#
+	# Downlaod the project's source files. The download can be from an online
+	# archive, or a source code repository.
+	#
+	def download (self, ctx):
+		url = 'git@github.com:DOCGroup/MPC.git'
+		tag = None
+		
+		if not ctx.use_trunk:
+			tag = 'ACE+TAO+CIAO-6_3_2'
 
-        append_path_variable (abspath)
+		abspath = path.abspath (path.join (ctx.prefix, self.__location__))
+		Git.checkout (url=url, location=abspath, tag=tag)
 
-    #
-    # Validate environment for the project
-    #
-    def validate_environment (self):
-        import subprocess
+	#
+	# Set the project's environment variables.
+	#
+	def set_env_variables (self, prefix):
+		abspath = path.abspath (path.join (prefix, self.__location__))
+		os.environ['MPC_ROOT'] = abspath
 
-        if 'MPC_ROOT' not in os.environ:
-            logging.getLogger ().error ('MPC_ROOT environment variable is not defined')
-            return False
+		from ..Utilities import append_libpath_variable
+		from ..Utilities import append_path_variable
 
-        subprocess.check_call (["perl", "-v"])
-        return True
+		append_path_variable (abspath)
 
-    #
-    # Update the script with details to configure the environment and
-    # support the project.
-    #
-    # @param[in]            script          ScriptFile object
-    #
-    def update_script (self, prefix, script):
-        abspath = path.abspath (path.join (prefix, self.__location__))
+	#
+	# Validate environment for the project
+	#
+	def validate_environment (self):
+		import subprocess
 
-        if path.exists (abspath):
-            script_path = script.get_this_variable ()
-            location = os.path.join (script_path, self.__location__)
+		if 'MPC_ROOT' not in os.environ:
+			logging.getLogger ().error ('MPC_ROOT environment variable is not defined')
+			return False
 
-            script.begin_section ('MPC')
-            script.write_env_variable ('MPC_ROOT', location)
-            script.append_path_variable (location)
+		subprocess.check_call (["perl", "-v"])
+		return True
+
+	#
+	# Update the script with details to configure the environment and
+	# support the project.
+	#
+	# @param[in]            script          ScriptFile object
+	#
+	def update_script (self, prefix, script):
+		abspath = path.abspath (path.join (prefix, self.__location__))
+
+		if path.exists (abspath):
+			script_path = script.get_this_variable ()
+			location = os.path.join (script_path, self.__location__)
+	
+			script.begin_section ('MPC')
+			script.write_env_variable ('MPC_ROOT', location)
+			script.append_path_variable (location)
 
