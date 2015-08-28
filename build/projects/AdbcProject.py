@@ -11,7 +11,7 @@
 ################################################################################
 
 from ..Project import Project
-from ..scm import Subversion
+from ..scm import Git
 
 import os
 from os import path
