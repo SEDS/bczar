@@ -53,6 +53,7 @@ class DocMiddlewareProject (Project):
 	# archive, or a source code repository.
 	#
 	def download (self, ctx):
+		url = 'git@github.com:DOCGroup/ATCD.git'
 		tag = None
 		
 		if not ctx.use_trunk:
@@ -170,6 +171,9 @@ class DocMiddlewareProject (Project):
 				elif version.startswith ('10.9'):
 					platform_macros = 'platform_macosx_mavericks.GNU'
 					config_file = 'config-macosx-mavericks.h'
+				elif version.startswith ('10.10'):
+					platform_macros = 'platform_macosx_yosemite.GNU'
+					config_file = 'config-macosx-yosemite.h'
 				else:
 					assert False, '*** error: unknown/unsupported version of MacOS X'
 
