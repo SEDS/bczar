@@ -262,7 +262,7 @@ workspace (pcre) {
 
         else:
             # First, we need to fix any SDO linkage problems.
-            self.fix_SDO_linkage (PCRE_ROOT)
+            #self.fix_SDO_linkage (PCRE_ROOT)
 
             # We can then proceed with running automake to generate
             # the ./configure script.
