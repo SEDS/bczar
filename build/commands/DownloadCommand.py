@@ -13,7 +13,6 @@
 from ..Command import Command
 from ..Context import Context
 
-import os
 from os import path
 import logging
 
@@ -82,8 +81,8 @@ class DownloadCommand (Command):
     propfile.open (properties_filename)
     
     # Open the script file for writing.
-    from .GenerateConfigCommand import open_script_file
-    script = open_script_file (ctx.prefix)
+    from ..ScriptFile import open_script
+    script = open_script (ctx.prefix)
     
     for proj in ctx.workspace.order_projects ():
         # Download the project.
