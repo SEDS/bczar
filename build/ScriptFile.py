@@ -11,6 +11,26 @@
 ################################################################################
 
 import sys
+from os import path
+
+#
+# Open the script file
+#
+def open_script (prefix):
+  from .Utilities import is_windows_platform
+
+  if is_windows_platform ():
+      # We are going to use a batch file.
+      from .scripts import BatchFile
+      script = BatchFile.BatchFile ()
+      script.open (path.join (prefix, 'configure.bat'))
+
+  else:
+      from .scripts import ShFile
+      script = ShFile.ShFile ()
+      script.open (path.join (prefix, 'configure.sh'))
+
+  return script
 
 #
 # @class ScriptFile
@@ -20,6 +40,7 @@ import sys
 # .properties file.
 #
 class ScriptFile:
+
   #
   # Default constructor.
   #

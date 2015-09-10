@@ -1,0 +1,16 @@
+sudo: false
+language: python
+
+python:
+  - "3.2"
+  - "3.3"
+  - "3.4"
+
+env:
+  matrix:
+    - USE_TRUNK=--use-trunk
+    - USE_TRUNK=
+
+script:
+  - python ./bczar.py --prefix=/tmp download --use-https $USE_TRUNK
+  - python ./bczar.py --prefix=/tmp build --threads 4

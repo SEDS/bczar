@@ -75,8 +75,6 @@ class XscProject (Project):
         os.environ['XSC_ROOT'] = abspath
 
         from ..Utilities import append_libpath_variable
-        from ..Utilities import append_path_variable
-
         append_libpath_variable (path.join (abspath, 'lib'))
 
     #
