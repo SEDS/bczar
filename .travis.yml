@@ -1,4 +1,5 @@
 sudo: false
+
 language: python
 
 python:
@@ -8,14 +9,14 @@ python:
 
 env:
   matrix:
-    - PROJECT=ADBC
-    - PROJECT=Boost
-    - PROJECT=CUTS
-    - PROJECT=DOC
-    - PROJECT=OASIS
     - PROJECT=pcre
     - PROJECT=SQLite
     - PROJECT=XercesC
+    - PROJECT=Boost
+    - PROJECT=ADBC
+    - PROJECT=CUTS
+    - PROJECT=DOC
+    - PROJECT=OASIS
     - PROJECT=XSC
 
 script:
