@@ -34,7 +34,7 @@ def __create__ ():
 # Implementation of the Project class for CUTS.
 #
 class CutsProject (Project):
-    __location__ =  path.join ('SEM', 'CUTS')
+    __location__ = 'CUTS'
 
     #
     # Default constructor.

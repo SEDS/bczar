@@ -36,7 +36,7 @@ class OasisProject (Project):
     #
     def __init__ (self):
         Project.__init__ (self, 'OASIS')
-        self.__location__ = path.join ('SEM', 'OASIS')
+        self.__location__ = 'OASIS'
 
     #
     # Get the project's dependencies. The return value of this
