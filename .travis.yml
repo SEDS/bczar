@@ -1,0 +1,23 @@
+sudo: false
+language: python
+
+python:
+  - "3.2"
+  - "3.3"
+  - "3.4"
+
+env:
+  matrix:
+    - PROJECT=ADBC
+    - PROJECT=Boost
+    - PROJECT=CUTS
+    - PROJECT=DOC
+    - PROJECT=OASIS
+    - PROJECT=pcre
+    - PROJECT=SQLite
+    - PROJECT=XercesC
+    - PROJECT=XSC
+
+script:
+  - python ./bczar.py --prefix=/tmp download --use-https --includes=$PROJECT
+  - python ./bczar.py --prefix=/tmp build --threads 4
