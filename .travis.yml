@@ -4,8 +4,10 @@ language: python
 
 python:
   - "3.2"
-  - "3.3"
-  - "3.4"
+
+os:
+  - linux
+  - osx
 
 env:
   matrix:
@@ -20,5 +22,5 @@ env:
     - PROJECT=XSC
 
 script:
-  - python ./bczar.py --prefix=/tmp --includes=$PROJECT download --use-https
+  - python ./bczar.py --prefix=/tmp --includes=$PROJECT download --use-https --use-trunk
   - python ./bczar.py --prefix=/tmp --includes=$PROJECT build --threads 4
