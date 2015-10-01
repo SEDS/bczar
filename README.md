@@ -1,6 +1,8 @@
 Build Czar (bczar)
 ==================
 
+[![Build Status](https://travis-ci.org/SEDS/bczar.svg?branch=master)](https://travis-ci.org/SEDS/bczar)
+
 This is a custom framework for building different middleware frameworks and
 its dependencies. 
 
