@@ -93,15 +93,12 @@ class MpcWorkspace:
             from .Utilities import get_vc_executable
             cmd = [get_vc_executable (), solution, '/useenv', '/Build', self._config_]
 
-        elif self._type_ in ('gnuace', 'nmake', 'make'):
+        elif self._type_ in ('gnuace', 'make', 'nmake'):
             # Set the executable command.
-            if self._type_ == 'gnuace':
-                if sys.platform == 'darwin':
-                    cmd = ['make', '-j', self._threads_]
-                else:
-                    cmd = ['gmake', '-j', self._threads_]
+            if self._type_ == 'nmake':
+                cmd = ['nmake']
             else:
-                cmd = [self._type_, '-j', self._threads_]
+                cmd = ['make', '-j', self._threads_]
 
             if self._features_ is not None:
                 # Append the macros to the command-line

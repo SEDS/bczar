@@ -138,8 +138,22 @@ class BoostProject (Project):
             cmd = [bootstrap, prefix_arg]
             subprocess.check_call (cmd, cwd = BOOST_ROOT)
 
+        # Generate the Boost headers. This line is need for Boost 1.56 or greater.
+        # It may even be needed for an earlier version. To play it safe, we are going
+        # to check if b2 exists. If it does, we are going to run it before calling
+        # bjam to build Boost.
+        if sys.platform == 'win32':
+            b2 = path.join (BOOST_ROOT, 'b2.exe')
+        else:
+            b2 = path.join (BOOST_ROOT, 'b2')
+
+        if path.exists (b2):
+            cmd = [b2, 'headers']
+            subprocess.check_call (cmd, cwd = BOOST_ROOT)
+
         # Now, we can actually build Boost using the local version of bjam
         bjam = path.join (BOOST_ROOT, 'bjam')
+
         if sys.platform == 'win32':
             toolsets = { 'vc71'     : 'msvc-7.1',
                          'vc8'      : 'msvc-8.0',
