@@ -153,7 +153,7 @@ class BoostProject (Project):
 
         # Now, we can actually build Boost using the local version of bjam
         bjam = path.join (BOOST_ROOT, 'bjam')
-        
+
         if sys.platform == 'win32':
             toolsets = { 'vc71'     : 'msvc-7.1',
                          'vc8'      : 'msvc-8.0',
