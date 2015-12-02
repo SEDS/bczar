@@ -160,7 +160,9 @@ def autodetect_build_type ():
     version_minor = match.group ('version_minor')
 
 
-    if version_major == '17':
+    if version_major == '18':
+      type = 'vc12'
+    elif version_major == '17':
       type = 'vc11'
     elif version_major == '16':
       type = 'vc10'
