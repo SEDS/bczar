@@ -155,11 +155,12 @@ class BoostProject (Project):
         bjam = path.join (BOOST_ROOT, 'bjam')
 
         if sys.platform == 'win32':
-            toolsets = { 'vc71'     : 'msvc-7.1',
-                         'vc8'      : 'msvc-8.0',
-                         'vc9'      : 'msvc-9.0',
-                         'vc10'     : 'msvc-10.0',
-                         'vc11'     : 'msvc-11.0'}
+            toolsets = { 'vc71' : 'msvc-7.1',
+                         'vc8'  : 'msvc-8.0',
+                         'vc9'  : 'msvc-9.0',
+                         'vc10' : 'msvc-10.0',
+                         'vc11' : 'msvc-11.0',
+                         'vc12' : 'msvc-12.0'}
 
             cmd = [bjam,
                    prefix_arg,

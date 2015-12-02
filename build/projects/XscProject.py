@@ -52,10 +52,6 @@ class XscProject (Project):
     #
     def download (self, ctx):
         abspath = path.abspath (path.join (ctx.prefix, self.__location__))
-
-        if not ctx.use_https:
-            logging.getLogger ().warn ('Github only supports HTTPS checkouts.')
-
         url = 'https://github.com/SEDS/XSC.git'
         Git.checkout (url, abspath)
 
