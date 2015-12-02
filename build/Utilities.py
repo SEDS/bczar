@@ -173,7 +173,7 @@ def autodetect_build_type ():
     elif version_major == '13':
       type = 'vc7'
     else:
-      assert False, '*** error: unknown cl.exe version (%d.%d)' % (version_major, version_minor)
+      assert False, '*** error: unknown cl.exe version (%s.%s)' % (version_major, version_minor)
 
   sys.stdout.write ('%s\n' % type)
   return type
