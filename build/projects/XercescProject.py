@@ -139,11 +139,12 @@ class XercescProject (Project):
         if platform == 'win32':
             import shutil
 
+            platform = os.getenv('Platform')
             sln = 'projects/Win32/%s/xerces-all/xerces-all.sln' % ctx.build_type.upper ()
-            configs = ['Debug|Win32',
-                       'Release|Win32',
-                       'Static Debug|Win32',
-                       'Static Release|Win32']
+            configs = ['Debug|%s' % platform,
+                       'Release|%s' % platform,
+                       'Static Debug|%s' % platform,
+                       'Static Release|%s' % platform]
 
             # Make sure the library path exists.
             libpath = os.path.join (XERCESCROOT, 'lib')
@@ -159,7 +160,12 @@ class XercescProject (Project):
 
                 # Copy all output files to the library path.
                 tmp = config.split ('|')
-                build = 'Build/%s/%s/%s' % (tmp[1], ctx.build_type.upper (), tmp[0])
+                platform = tmp[1]
+
+                if platform.lower () == 'x64':
+                    platform = 'Win64'
+
+                build = 'Build/%s/%s/%s' % (platform, ctx.build_type.upper (), tmp[0])
                 outdir = os.path.join (XERCESCROOT, build)
 
                 for file in os.listdir (outdir):
