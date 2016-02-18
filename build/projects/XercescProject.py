@@ -138,8 +138,13 @@ class XercescProject (Project):
 
         if platform == 'win32':
             import shutil
-
-            platform = os.getenv('Platform')
+            import platform as platform_lib
+            
+            if platform_lib.architecture()[0] == "64bit":
+                platform = "x64"
+            else:
+                platform = "Win32"
+          
             sln = 'projects/Win32/%s/xerces-all/xerces-all.sln' % ctx.build_type.upper ()
             configs = ['Debug|%s' % platform,
                        'Release|%s' % platform,
