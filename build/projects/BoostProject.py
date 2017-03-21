@@ -49,7 +49,7 @@ class BoostProject (Project):
             url = 'https://github.com/boostorg/boost.git'
         else:
             url = 'git@github.com:boostorg/boost.git'
-        tag = 'boost-1.56.0'
+        tag = 'boost-1.63.0'
         abspath = path.abspath (path.join (ctx.prefix, self.__location__))
         Git.checkout (url, abspath, tag=tag)
 
@@ -63,7 +63,7 @@ class BoostProject (Project):
         os.environ['BOOST_ROOT'] = abspath
 
         if sys.platform == 'win32':
-            os.environ['BOOST_VERSION'] = 'boost-1_56'
+            os.environ['BOOST_VERSION'] = 'boost-1_63'
 
         from ..Utilities import append_libpath_variable
         from ..Utilities import append_path_variable
